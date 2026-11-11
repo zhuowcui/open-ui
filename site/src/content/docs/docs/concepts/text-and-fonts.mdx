@@ -1,12 +1,12 @@
 ---
 title: Text and fonts
-description: System fonts, bundling your own font files, and the text properties Open UI supports.
+description: System fonts, bundling your own font files, and the text properties Div supports.
 ---
 
 import { Aside } from '@astrojs/starlight/components';
 import Example from '../../../../components/Example.astro';
 
-Open UI shapes and draws text itself, through Skia, with font fallback,
+Div shapes and draws text itself, through Skia, with font fallback,
 bidirectional text and line breaking that follow the browser's rules.
 Text you write in `view!`, as a `"literal"` or a `{expr}`, becomes text
 nodes inside the element.
@@ -58,7 +58,7 @@ Register fonts once, before the view that uses them is built. In an
 | Set the language | `lang` on an element, which picks language-specific shaping, and hyphenation with `hyphens` |
 
 All of them inherit, so set them on a container. The full list, with the
-values each accepts, is in the [properties reference](/open-ui/reference/properties/#typography).
+values each accepts, is in the [properties reference](/reference/properties/#typography).
 
 <Aside type="caution" title="Not yet">
 `text-decoration` and `text-decoration-line` compile but draw no line on

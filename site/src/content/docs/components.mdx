@@ -1,6 +1,6 @@
 ---
 title: Components
-description: A component library based on shadcn/ui designs, built on Open UI's elements. In progress.
+description: A component library based on shadcn/ui designs, built on Div's elements. In progress.
 ---
 
 import { Aside } from '@astrojs/starlight/components';
@@ -8,13 +8,13 @@ import Shot from '../../components/Shot.astro';
 
 A component library based on [shadcn/ui](https://ui.shadcn.com/) designs is
 in progress: **button, badge, card, label and separator** so far. It is a
-library on top of Open UI's [elements](/open-ui/elements/): each component
+library on top of Div's [elements](/elements/): each component
 is a Rust function that returns styled elements, written with the same
 `view!` and `style:` you use in your own code. You can build an app without
 it.
 
 <Aside type="caution" title="Early and unpublished">
-The crate is `openui-components` (a working name), in the repository's
+The crate is `openui-components`, in the repository's
 [`components/`](https://github.com/zhuowcui/open-ui/tree/main/components)
 folder. It is its own Cargo workspace, not part of the `openui` crate, and
 it is not published. The components are Rust reimplementations of the
@@ -24,7 +24,7 @@ Each one is compared with shadcn/ui rendered in Chrome; hover and focus
 styles, and the icons shadcn/ui draws with Lucide, are not there yet.
 </Aside>
 
-The images on this page are rendered by Open UI.
+The images on this page are rendered by Div.
 
 ## Button
 
@@ -42,7 +42,7 @@ view! {
 
 Variants: `Default`, `Secondary`, `Outline`, `Ghost`, `Destructive`, `Link`.
 Sizes: `Xs`, `Sm`, `Default`, `Lg`. `Button` draws a
-[`<button>` element](/open-ui/elements/button/) with shadcn/ui's styles.
+[`<button>` element](/elements/button/) with shadcn/ui's styles.
 
 ## Badge
 
@@ -60,7 +60,7 @@ The same six variants as `Button`.
 
 ```rust
 view! {
-    <Label>"Open UI"</Label>
+    <Label>"Div"</Label>
     <Separator orientation={Orientation::Horizontal} />
 }
 ```
@@ -69,8 +69,8 @@ view! {
 
 `Card`, `CardHeader`, `CardTitle`, `CardDescription`, `CardAction`,
 `CardContent` and `CardFooter` exist. Their layout is still taller than
-shadcn/ui's, because Open UI's column flexbox sizes text too narrowly (see
-[Layout](/open-ui/docs/concepts/layout/#known-differences)), so the panels in these
+shadcn/ui's, because Div's column flexbox sizes text too narrowly (see
+[Layout](/docs/concepts/layout/#known-differences)), so the panels in these
 screenshots are built from styled elements instead.
 
 ## Examples built from elements
@@ -91,7 +91,7 @@ The avatars are styled `div`s with initials.
 More components are planned, but not built. The design (RFC 0003 in the
 repository) puts tabs, dialog, checkbox and switch first, then popover,
 menu, select, tooltip and collapsible, which need overlay features the
-engine does not have yet. See the [roadmap](/open-ui/docs/roadmap/).
+engine does not have yet. See the [roadmap](/docs/roadmap/).
 
 <style>{`
   .ou-shot { border: 1px solid var(--sl-color-gray-5); border-radius: 12px; overflow: hidden; max-width: 400px; }

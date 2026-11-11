@@ -8,7 +8,7 @@ import ElementTable from '../../../components/ElementTable.astro';
 import Example from '../../../components/Example.astro';
 
 `<textarea>` is a multi-line text field. It edits like a text
-[input](/open-ui/elements/input/#text), and Enter inserts a new line. When
+[input](/elements/input/#text), and Enter inserts a new line. When
 the text is longer than the box, it scrolls.
 
 <Example name="el_textarea" alt="A Release notes label above a bordered four-line text area containing one line of text" />
@@ -22,7 +22,7 @@ the text is longer than the box, it scrolls.
 | `rows`, `cols` | The size when no CSS size is set: 2 rows and 20 columns by default, plus room for a scrollbar. |
 | `value` | The text, and its live value as the user edits. |
 | `placeholder` | Shown while it is empty (see the caution below). |
-| `readonly`, `disabled` | As for [input](/open-ui/elements/input/#attributes). |
+| `readonly`, `disabled` | As for [input](/elements/input/#attributes). |
 
 Text written between the tags is drawn, but it does not become the value:
 `control_value()` starts empty. Set the text with `value`.
@@ -55,7 +55,7 @@ The role is `MultilineTextInput`, with its value. Name it with
 
 ## Differences from HTML
 
-| HTML | Open UI |
+| HTML | Div |
 | --- | --- |
 | Default border, padding and monospace font | None; inherits the font |
 | Text between the tags is the initial value | Use `value` |

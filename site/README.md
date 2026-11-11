@@ -1,13 +1,14 @@
 # Project website
 
-The Open UI website: a landing page, docs and a components page, built with
+The Div website: a landing page, docs and a components page, built with
 [Astro](https://astro.build/) 7.3.8 and
 [Starlight](https://starlight.astro.build/) 0.42.8, with Pagefind search. It
-is published to GitHub Pages at <https://zhuowcui.github.io/open-ui/> by
+is published to GitHub Pages at <https://div.build/> (`public/CNAME`) by
 `.github/workflows/site.yml`.
 
-"Open UI" is a working name; this project is unrelated to the W3C Open UI
-Community Group.
+The project's name, domain and repository URL are set once, in
+`src/lib/project.mjs`. Code samples use the names the code has on `main`
+(`openui`, `openui-cli`).
 
 ## Commands
 
@@ -17,7 +18,7 @@ print an engine warning on older 22.x); CI uses Node 24.22.1.
 ```sh
 cd site
 npm ci
-npm run dev       # http://localhost:4321/open-ui/
+npm run dev       # http://localhost:4321/
 npm run build     # static site in dist/
 npm run preview   # serve dist/
 npm run check-assets
@@ -31,7 +32,7 @@ recorded in `scripts/assets.json`.
 
 ## Screenshots
 
-Every app image on the site is drawn by Open UI, headless, and committed in
+Every app image on the site is drawn by Div, headless, and committed in
 `src/assets/showcase/` as rendered. The site's build only reads them, so
 site CI never builds Rust or Skia.
 
@@ -42,7 +43,7 @@ site CI never builds Rust or Skia.
 | `showcase/src/docs/` | The docs examples. `Example.astro` shows each file whole next to its render, `docs-<name>-light.png` |
 | `showcase/src/snippets/` | Code the docs show that cannot be drawn headless (windows, menus, dialogs, HTTP, tests), and `fragments.rs`, which holds the short inline fragments from the docs pages. Compiled, never run; `Snippet.astro` shows a file whole |
 | `showcase/render.ps1` | Builds the renderer (and compiles its tests) with the CI Skia flags and the shared prebuilt Skia, and writes every scene and docs example (Windows) |
-| `showcase/reference/example.html` | The same card as HTML, with Geist and a small reset that matches Open UI's lack of default styles |
+| `showcase/reference/example.html` | The same card as HTML, with Geist and a small reset that matches Div's lack of default styles |
 | `showcase/capture.py` | Draws that page with the pinned Chromium through the components harness (Linux or WSL) |
 
 ```powershell
@@ -61,7 +62,7 @@ python3 site/showcase/capture.py   # example-chromium-light.png
 
 `showcase` is its own Cargo workspace, like `components/`, and uses only the
 public `openui` crate and `openui-components`. Its scenes stack content in
-block flow and use flex only for rows: Open UI's column flex boxes still
+block flow and use flex only for rows: Div's column flex boxes still
 size text items as if at their min-content width, which is also why the
 `Card` component is not used in them yet.
 

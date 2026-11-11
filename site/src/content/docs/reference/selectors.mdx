@@ -1,12 +1,12 @@
 ---
 title: Selectors and state
-description: Open UI has no selectors or pseudo-classes on main. How to style pseudo-elements and interaction state today, and what is planned.
+description: Div has no selectors or pseudo-classes on main. How to style pseudo-elements and interaction state today, and what is planned.
 ---
 
 import { Aside } from '@astrojs/starlight/components';
 
 <Aside type="caution" title="No selectors on main">
-Open UI has no stylesheets, so there are no selectors, no pseudo-classes
+Div has no stylesheets, so there are no selectors, no pseudo-classes
 such as `:hover`, `:focus` or `:checked`, and no class-based styling. Every
 style is set on its element. `class` attributes are stored, and
 `Document::elements_with_class` can find elements by class, but a class
@@ -48,7 +48,7 @@ Elements track their state, and you can read it:
 | Disabled | `Element::is_effectively_disabled()` | You set it |
 
 To style a state, keep it in a signal, set the signal from those events,
-and read it in a dynamic `style:`. [Styling](/open-ui/docs/concepts/styling/#styling-state)
+and read it in a dynamic `style:`. [Styling](/docs/concepts/styling/#styling-state)
 has an example for hover.
 
 ## Planned

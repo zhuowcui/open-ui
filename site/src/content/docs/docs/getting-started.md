@@ -6,6 +6,9 @@ description: Install the openui CLI, create an app, run it, change it and build 
 This guide takes you from nothing to a running app and a release build in
 five steps. It works on Windows and Linux.
 
+The packages and the CLI are still named `openui` while the rename to Div
+lands.
+
 ## Before you start
 
 You need [Rust](https://rustup.rs) 1.85 or later, Git, Python 3, Ninja and
@@ -108,11 +111,11 @@ browser runtime and no bundled webview.
 
 ## Next
 
-- [Views and `view!`](/open-ui/docs/concepts/views/) explains markup and
-  components, and [Elements](/open-ui/docs/concepts/elements/) the elements
+- [Views and `view!`](/docs/concepts/views/) explains markup and
+  components, and [Elements](/docs/concepts/elements/) the elements
   every view is made of.
-- The [Elements reference](/open-ui/elements/) covers each element, such as
-  the [button](/open-ui/elements/button/) and [input](/open-ui/elements/input/)
+- The [Elements reference](/elements/) covers each element, such as
+  the [button](/elements/button/) and [input](/elements/input/)
   in this app.
-- [Testing](/open-ui/docs/services/testing/) covers the tests in
+- [Testing](/docs/services/testing/) covers the tests in
   `tests/ui.rs`.

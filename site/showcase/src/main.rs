@@ -1,4 +1,4 @@
-//! Render the website's screenshots with Open UI.
+//! Render the website's screenshots with Div.
 //!
 //!     openui-site-showcase <out-dir> [scene...]
 //!
@@ -9,7 +9,7 @@
 //! which the site commits and shows as they are.
 //!
 //! The scenes stack content in normal block flow and use flex only for
-//! rows. Open UI's column flex boxes still size text items as if at their
+//! rows. Div's column flex boxes still size text items as if at their
 //! min-content width, so `Card` (a column flex box) is not used here yet.
 
 #![allow(unused_variables)] // `#[component]` functions without props.
@@ -652,7 +652,7 @@ fn settings() -> ViewNode {
     let t = theme();
     centered(view! {
         <div style:width="320px">
-            <Label>"Open UI"</Label>
+            <Label>"Div"</Label>
             <div style:font-size="14px" style:line-height="20px" style:margin-top="4px" style:color={t.muted_foreground}>
                 "A native UI framework for Rust."
             </div>

@@ -1,6 +1,6 @@
 ---
 title: CLI
-description: The openui command creates, runs, rebuilds and packages Open UI apps.
+description: The openui command creates, runs, rebuilds and packages Div apps.
 ---
 
 import { Aside } from '@astrojs/starlight/components';
@@ -33,9 +33,9 @@ exist.
 | `--template default` | The default: a menu bar, a file dialog, an HTTP request and headless UI tests. |
 | `--template minimal` | One window with a counter. |
 | `--path <dir>` | Create it somewhere other than `./<name>`. |
-| `--framework-path <dir>` | Depend on a local Open UI checkout instead of the Git repository. |
+| `--framework-path <dir>` | Depend on a local Div checkout instead of the Git repository. |
 
-The app depends on Open UI's `main` branch from GitHub, and gets the
+The app depends on Div's `main` branch from GitHub, and gets the
 framework's `Cargo.lock` and a `.cargo/config.toml` with the settings the
 Skia build needs. The first build compiles Skia from source and takes
 several minutes.

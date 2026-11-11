@@ -6,7 +6,7 @@ description: Tables with real CSS table layout, from table, thead, tbody, tfoot,
 import ElementTable from '../../../components/ElementTable.astro';
 import Example from '../../../components/Example.astro';
 
-Open UI implements CSS table layout: columns size to their content, cells
+Div implements CSS table layout: columns size to their content, cells
 in a row share a height, and cells can span rows and columns. The table
 tags are the same as HTML's, and each one gets its table `display`.
 
@@ -18,7 +18,7 @@ tags are the same as HTML's, and each one gets its table `display`.
 
 `<table>` holds an optional `<caption>`, optional `<colgroup>`/`<col>`,
 then `<thead>`, `<tbody>` and `<tfoot>` row groups of `<tr>` rows, each of
-`<th>` or `<td>` cells. Write the row groups: Open UI does not insert a
+`<th>` or `<td>` cells. Write the row groups: Div does not insert a
 `<tbody>` for you as an HTML parser does.
 
 ## Attributes
@@ -58,7 +58,7 @@ are `GenericContainer`.
 
 ## Differences from HTML
 
-| HTML | Open UI |
+| HTML | Div |
 | --- | --- |
 | Default `border-spacing`, cell padding, bold centered `th` | None |
 | The parser adds a missing `tbody` | Elements nest exactly as written |

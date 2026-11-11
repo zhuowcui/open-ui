@@ -1,18 +1,18 @@
 ---
 title: Elements
-description: What an Open UI element is, how it differs from an HTML element, and how to work with one from Rust.
+description: What a Div element is, how it differs from an HTML element, and how to work with one from Rust.
 ---
 
 import { Aside } from '@astrojs/starlight/components';
 
-Every tag in a `view!` creates an **element**: a native node that Open UI
+Every tag in a `view!` creates an **element**: a native node that Div
 styles, lays out, paints, hit-tests and exposes to assistive technology
 itself. There is no HTML document behind it and no browser. The tags borrow
 HTML's names because they are familiar, and the layout and paint follow
 CSS closely, but the set of elements, their attributes and their behavior
-are Open UI's own.
+are Div's own.
 
-The [Elements reference](/open-ui/elements/) lists every element with its
+The [Elements reference](/elements/) lists every element with its
 attributes, events, styling, accessibility and differences from HTML. This
 page covers what they share.
 
@@ -98,12 +98,12 @@ attribute once, when the view is built. A boolean attribute such as
 `disabled` or `checked` counts as present whatever its value, so
 `disabled={false}` still disables; to switch one, call `set_attribute` or
 `remove_attribute`. Which attributes do something is listed on each
-element's page, and the [attributes every element takes](/open-ui/elements/#attributes-every-element-takes)
+element's page, and the [attributes every element takes](/elements/#attributes-every-element-takes)
 are on the index.
 
 ## Accessibility
 
-Open UI builds an accessibility tree from the elements and exposes it
+Div builds an accessibility tree from the elements and exposes it
 through UI Automation on Windows and AT-SPI on Linux. Controls get their
 roles and states from what they are. Tags do not carry meaning, so a
 `<h2>` or `<nav>` is a generic container until you set a role:

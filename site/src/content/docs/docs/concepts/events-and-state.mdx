@@ -6,7 +6,7 @@ description: Signals hold state, views read them, and event handlers change them
 import { Aside } from '@astrojs/starlight/components';
 import Example from '../../../../components/Example.astro';
 
-State in Open UI lives in **signals**. A view reads signals in its `{…}`
+State in Div lives in **signals**. A view reads signals in its `{…}`
 text and its dynamic `style:` values; an event handler changes them; and
 exactly the text and styles that read a changed signal update. Nothing
 re-renders as a whole.
@@ -100,9 +100,9 @@ left, 1 middle, 2 right), `key_text` (such as `"Enter"` or `"a"`),
 
 `For` renders one row per item and keeps rows by key; `Show` swaps between
 two views. They cannot go inside `view!`; mount them into an element, as
-the example does with its `<ul>`. See [Views and view!](/open-ui/docs/concepts/views/#lists-and-conditions).
+the example does with its `<ul>`. See [Views and view!](/docs/concepts/views/#lists-and-conditions).
 
 ## Async work
 
 Long work, file dialogs and HTTP run off the UI thread and report back by
-setting a signal. See [Async tasks](/open-ui/docs/services/async/).
+setting a signal. See [Async tasks](/docs/services/async/).

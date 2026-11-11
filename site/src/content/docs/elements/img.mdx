@@ -7,7 +7,7 @@ import { Aside } from '@astrojs/starlight/components';
 import ElementTable from '../../../components/ElementTable.astro';
 import Example from '../../../components/Example.astro';
 
-`<img>` shows an image. Open UI has no network loader and no file paths, so
+`<img>` shows an image. Div has no network loader and no file paths, so
 an image comes from bytes: register them with the document, then point the
 `<img>` at the registered image.
 
@@ -26,7 +26,7 @@ an image comes from bytes: register them with the document, then point the
 
 `include_bytes!` puts the image in your binary, as in the example. The
 `sha256` string is the cache key for the decoded image: pass the file's
-real digest, because Open UI does not check it, and two images with the
+real digest, because Div does not check it, and two images with the
 same key share one decode. `source` is a name for the image; it is not
 loaded.
 
@@ -62,7 +62,7 @@ The role is `Image`, named by `alt`. Give decorative images
 
 ## Differences from HTML
 
-| HTML | Open UI |
+| HTML | Div |
 | --- | --- |
 | `src`, `srcset` and `<picture>` load from URLs | Register bytes and call `set_image_resource` |
 | Natural size comes from the file | Pass the size; 300×150 otherwise |

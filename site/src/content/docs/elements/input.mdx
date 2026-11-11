@@ -10,7 +10,7 @@ import data from '../../../data/elements.json';
 
 `<input>` is a native control whose behavior depends on its `type`: a
 single-line text field by default, or a checkbox, radio button or slider.
-Open UI edits text itself (selection, undo, clipboard and IME), and paints
+Div edits text itself (selection, undo, clipboard and IME), and paints
 the checkable and range controls in Chromium's style.
 
 <ElementTable tags={['input']} links={false} />
@@ -121,7 +121,7 @@ no event. A click fires `click`, then `input` and `change`. A range fires
 
 These are drawn, but open nothing: there is no color picker or calendar,
 and the file input opens no dialog. For files, use the [file
-dialogs](/open-ui/docs/services/dialogs/) service from a button.
+dialogs](/docs/services/dialogs/) service from a button.
 
 ## Styling
 
@@ -142,7 +142,7 @@ associated.
 
 ## Differences from HTML
 
-| HTML | Open UI |
+| HTML | Div |
 | --- | --- |
 | Controls have a default size and border | Text inputs are 20 characters wide with no border; checkable and range inputs are 0×0 |
 | `value` attribute is the default value | `value` is the live value |

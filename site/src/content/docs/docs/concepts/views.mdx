@@ -6,7 +6,7 @@ description: How the view! macro turns markup into elements, what can go in it, 
 import { Aside } from '@astrojs/starlight/components';
 import Example from '../../../../components/Example.astro';
 
-A view is a function that builds a tree of [elements](/open-ui/docs/concepts/elements/)
+A view is a function that builds a tree of [elements](/docs/concepts/elements/)
 and returns it as a `ViewNode`. You write the tree with the `view!` macro,
 which reads like HTML but compiles to Rust calls that create elements,
 set their attributes and styles, and attach event handlers.
@@ -17,15 +17,15 @@ set their attributes and styles, and attach event handlers.
 
 | You write | It becomes |
 | --- | --- |
-| `<div …>children</div>` or `<input … />` | An element. The tag must be one of the [base elements](/open-ui/elements/). |
+| `<div …>children</div>` or `<input … />` | An element. The tag must be one of the [base elements](/elements/). |
 | `"text"` | A static text node. Bare words without quotes are a compile error. |
 | `{expr}` | A text node showing `expr.to_string()`, updated whenever a signal it reads changes. |
 | `name="value"` | An attribute, set once. |
 | `name={expr}` | An attribute set once from `expr.to_string()`. Not reactive. |
 | `name` alone | A boolean attribute, set to `""`. |
-| `style:prop="value"` | A typed style, checked when you compile. See [Styling](/open-ui/docs/concepts/styling/). |
+| `style:prop="value"` | A typed style, checked when you compile. See [Styling](/docs/concepts/styling/). |
 | `style:prop={expr}` | A typed style that updates when its signals change. |
-| `on:event={handler}` | An event listener, `Fn(&Event)`. See [Events and state](/open-ui/docs/concepts/events-and-state/). |
+| `on:event={handler}` | An event listener, `Fn(&Event)`. See [Events and state](/docs/concepts/events-and-state/). |
 | `<Name …/>` (capital first letter) | A component call. |
 
 Several roots in one `view!` make a `ViewNode::Fragment`, and an empty
@@ -33,7 +33,7 @@ Several roots in one `view!` make a `ViewNode::Fragment`, and an empty
 
 <Aside type="caution" title="Things that compile but go wrong">
 - An unknown tag such as `<b>`, `<code>` or `<dialog>` compiles but panics
-  when the view is built. The [element list](/open-ui/elements/) is closed.
+  when the view is built. The [element list](/elements/) is closed.
 - `{expr}` needs a value that implements `Display`: write
   `{count.get()}`, not `{count}`.
 - A boolean attribute is on whatever its value: `disabled={false}` still
@@ -117,7 +117,7 @@ Each wraps its content in a `display: contents` box, so it does not affect
 layout. For text that depends on a condition, an `if` or `match` inside
 `{…}` is simpler: `{if done.get() { "Done" } else { "Pending" }}`.
 
-[Events and state](/open-ui/docs/concepts/events-and-state/) has a full
+[Events and state](/docs/concepts/events-and-state/) has a full
 list example.
 
 <Aside type="note">

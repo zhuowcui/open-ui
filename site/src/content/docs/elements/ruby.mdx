@@ -8,7 +8,7 @@ import ElementTable from '../../../components/ElementTable.astro';
 import Example from '../../../components/Example.astro';
 
 `<ruby>` pairs base text with a small annotation, `<rt>`, drawn above it:
-the reading of East Asian characters, for example. Open UI lays the base
+the reading of East Asian characters, for example. Div lays the base
 and its annotation out as one unit, so they never split across lines.
 
 <Example name="el_ruby" alt="The characters for Tokyo with their hiragana readings above them, followed by the word Tokyo" />
@@ -35,12 +35,12 @@ by default. Ruby layout has three typed styles: `set_ruby_position`,
 
 ## Attributes, events and accessibility
 
-No attributes of their own; events as for [span](/open-ui/elements/span/).
+No attributes of their own; events as for [span](/elements/span/).
 The roles are `Ruby` and `RubyAnnotation`.
 
 ## Differences from HTML
 
-| HTML | Open UI |
+| HTML | Div |
 | --- | --- |
 | `rt` is half size by default | No default size |
 | The line grows to fit annotations | Leave room with `line-height` |

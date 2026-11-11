@@ -4,7 +4,7 @@ pub fn example() -> ViewNode {
     let opened = create_signal(0);
     view! {
         <p style:margin="0" style:font-size="15px" style:line-height="1.6" style:width="400px">
-            "Open UI draws " <strong style:font-weight="600">"native windows"</strong>
+            "Div draws " <strong style:font-weight="600">"native windows"</strong>
             ", not web pages. Inline elements such as " <em style:font-style="italic">"em"</em>
             " and " <small style:font-size="12px">"small"</small> " have no style of their own. "
             <a

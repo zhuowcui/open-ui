@@ -6,7 +6,7 @@ description: Test views headless, click and type like a user, and compare pixels
 import { Aside } from '@astrojs/starlight/components';
 import Snippet from '../../../../components/Snippet.astro';
 
-Open UI apps can be tested without opening a window. A test mounts a view,
+Div apps can be tested without opening a window. A test mounts a view,
 finds elements by their text, clicks and types through real hit testing,
 and compares the rendered frame with an accepted snapshot.
 
@@ -52,7 +52,7 @@ Look at the image, commit it, and from then on `cargo test` fails on any
 change and writes the new frame next to the snapshot as
 `<name>.<os>.actual.png`, so you can see what moved. Snapshots are kept per
 operating system because system fonts differ; bundle your fonts (see
-[Text and fonts](/open-ui/docs/concepts/text-and-fonts/)) to make frames
+[Text and fonts](/docs/concepts/text-and-fonts/)) to make frames
 more stable.
 
 Apps made with `openui new` already have tests like these in `tests/ui.rs`.

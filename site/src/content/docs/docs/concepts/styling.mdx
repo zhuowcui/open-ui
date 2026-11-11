@@ -6,7 +6,7 @@ description: Set CSS properties on each element, as checked literals or as typed
 import { Aside } from '@astrojs/starlight/components';
 import Example from '../../../../components/Example.astro';
 
-Open UI styles elements with CSS properties and CSS values, computed the
+Div styles elements with CSS properties and CSS values, computed the
 way Chromium computes them. What it does not have is the stylesheet: there
 are no selectors, no classes that style, no cascade between rules and no
 default styles. Each element carries its own declarations, which you set
@@ -37,7 +37,7 @@ let tone = move || if failed.get() { Color::from_hex(0xb91c1c, false) } else { C
 
 The type must match exactly: `Color` for `color`, `LengthValue` for
 `width`, `f32` for `opacity`, `Display` for `display`. The
-[properties reference](/open-ui/reference/properties/) lists each type.
+[properties reference](/reference/properties/) lists each type.
 
 **A setter from code.** Every property has a typed setter on `Element`,
 such as `set_width(LengthValue::px(200.0))` or
@@ -48,11 +48,11 @@ style elements you hold as handles.
 ## What is supported
 
 - 258 properties, 207 of them with a literal form. Each is listed, with the
-  values it accepts, in the [properties reference](/open-ui/reference/properties/).
+  values it accepts, in the [properties reference](/reference/properties/).
 - Lengths in `px`, `%`, `em`, `rem`, `vw`, `vh`, `vmin`, `vmax`, `ch`,
   `ex` and `lh`.
 - Colors as hex, `rgb()`, named colors, `oklch()`, `oklab()` and
-  `color-mix()`. See [values and units](/open-ui/reference/values/).
+  `color-mix()`. See [values and units](/reference/values/).
 - Shorthands for `margin`, `padding`, `border`, `border-radius`, `font`,
   `white-space`, `text-decoration` and others.
 
@@ -62,7 +62,7 @@ style elements you hold as handles.
 - The `flex`, `background`, `outline` and `inset` shorthands: use the
   longhands, such as `flex-grow` and `flex-basis`.
 - Selectors and pseudo-classes such as `:hover` and `:focus`. Style state
-  changes from event handlers; see [selectors and state](/open-ui/reference/selectors/).
+  changes from event handlers; see [selectors and state](/reference/selectors/).
 </Aside>
 
 ## Inheritance

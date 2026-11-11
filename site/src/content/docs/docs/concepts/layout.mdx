@@ -6,10 +6,10 @@ description: Block and inline flow, flexbox, grid and positioning, laid out the 
 import { Aside } from '@astrojs/starlight/components';
 import Example from '../../../../components/Example.astro';
 
-Open UI lays elements out with CSS's layout modes: block and inline flow,
+Div lays elements out with CSS's layout modes: block and inline flow,
 flexbox, grid, tables, multi-column and positioning. The layout code
 follows Chromium's and is tested against it (see
-[Rendering](/open-ui/docs/rendering/)), so a layout you know from the web
+[Rendering](/docs/rendering/)), so a layout you know from the web
 should behave the same way here, with the exceptions listed at the end of
 this page.
 
@@ -61,12 +61,12 @@ no `inset` shorthand.
 `width`, `height` and their `min-` and `max-` forms take lengths and
 percentages. `box-sizing="border-box"` works, but only as a literal: it
 cannot be set from a `{expr}`. `aspect-ratio`, `overflow` and the scroll
-properties are supported; see the [properties reference](/open-ui/reference/properties/).
+properties are supported; see the [properties reference](/reference/properties/).
 
 ## Known differences
 
 <Aside type="caution">
-These are the places where Open UI's layout is known to differ from a
+These are the places where Div's layout is known to differ from a
 browser on `main`:
 
 - **Column flexbox.** In a `flex-direction: column` container, text items

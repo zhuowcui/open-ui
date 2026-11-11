@@ -1,6 +1,6 @@
 ---
 title: ul, ol and li
-description: Lists in Open UI. li is a list-item block with a disc marker; ul and ol are plain blocks.
+description: Lists in Div. li is a list-item block with a disc marker; ul and ol are plain blocks.
 ---
 
 import ElementTable from '../../../components/ElementTable.astro';
@@ -8,7 +8,7 @@ import Example from '../../../components/Example.astro';
 
 `<li>` is a block with `display: list-item`, which gives it a marker, a
 disc, outside its box. `<ul>` and `<ol>` are plain [block
-elements](/open-ui/elements/div/) that hold the items.
+elements](/elements/div/) that hold the items.
 
 <Example name="el_lists" alt="A bulleted list of Flexbox, Grid and Web fonts, and a numbered list: 1. Install the CLI, 2. Create an app, 3. Run it" />
 
@@ -18,7 +18,7 @@ elements](/open-ui/elements/div/) that hold the items.
 
 The marker is set with the `list-style` property, which takes `disc` (the
 default) or `none`. There are no numbered markers: `<ol>` does not count
-its items, and `decimal` is not a value Open UI accepts. Write the numbers
+its items, and `decimal` is not a value Div accepts. Write the numbers
 as text, as in the example, or put them in their own `<span>`.
 
 An outside marker sits to the left of the item, so a list with no padding
@@ -33,13 +33,13 @@ The marker itself can be styled through the `::marker` pseudo-element:
 
 None of their own. `value` on `<li>` and `start` or `reversed` on `<ol>`
 have no effect. Events are those of any block; see
-[div](/open-ui/elements/div/#events).
+[div](/elements/div/#events).
 
 ## Rendering a list from data
 
 Use `For`, which keeps one item per key and adds, removes and reorders
 items as the data changes. It returns a view that you mount into the list
-element; see [Events and state](/open-ui/docs/concepts/events-and-state/)
+element; see [Events and state](/docs/concepts/events-and-state/)
 for a complete example.
 
 ## Accessibility
@@ -50,7 +50,7 @@ default. Set `AccessibilityRole::List` and `ListItem` with
 
 ## Differences from HTML
 
-| HTML | Open UI |
+| HTML | Div |
 | --- | --- |
 | `ul` and `ol` have padding and margins | None: add `padding-left` for the markers |
 | `ol` numbers its items (`decimal`, `lower-alpha`…) | Only `disc` and `none`: write numbers as text |

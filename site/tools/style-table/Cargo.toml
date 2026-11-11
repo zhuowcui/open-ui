@@ -1,11 +1,11 @@
-# Probes Open UI's style parser for the website's styling reference
+# Probes Div's style parser for the website's styling reference
 # (site/tools/style-table/generate.py). It depends only on openui-style, so
 # it builds without Skia. Its own workspace, like site/showcase.
 [workspace]
 
 [package]
 name = "openui-style-table"
-description = "Lists every Open UI style property and the literals its parser accepts"
+description = "Lists every Div style property and the literals its parser accepts"
 version = "0.0.0"
 edition = "2021"
 license = "Apache-2.0"

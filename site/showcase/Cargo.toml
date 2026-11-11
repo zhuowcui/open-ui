@@ -1,4 +1,4 @@
-# Renders the website's app screenshots with Open UI. A separate Cargo
+# Renders the website's app screenshots with Div. A separate Cargo
 # workspace, like components/, so the site's npm build and CI never touch
 # Rust or Skia. It repeats the patches of components/Cargo.toml.
 [workspace]
@@ -6,7 +6,7 @@ resolver = "2"
 
 [package]
 name = "openui-site-showcase"
-description = "Renders the Open UI website's screenshots with Open UI"
+description = "Renders the Div website's screenshots with Div"
 version = "0.0.0"
 edition = "2021"
 rust-version = "1.85"

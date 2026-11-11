@@ -1,13 +1,13 @@
 ---
 title: Values and units
-description: The lengths, numbers, colors and other values Open UI's style parser accepts, and what it does not accept yet.
+description: The lengths, numbers, colors and other values Div's style parser accepts, and what it does not accept yet.
 ---
 
 import { Aside } from '@astrojs/starlight/components';
 
-A literal in `style:prop="…"` is parsed by Open UI when you compile, with a
+A literal in `style:prop="…"` is parsed by Div when you compile, with a
 grammar that follows CSS but is narrower. This page describes the shared
-value types; the [properties reference](/open-ui/reference/properties/)
+value types; the [properties reference](/reference/properties/)
 gives the exact values for each property.
 
 ## Lengths
@@ -51,7 +51,7 @@ and its alpha is a number from 0 to 1. `oklch()` and `oklab()` take
 numbers or percentages, angles in `deg` for the hue, `none`, and an alpha
 after `/`. In `color-mix()`, `in <space>` may be left out (it defaults to
 `oklab`), each color may have a percentage, and `oklch` takes a hue method
-(`shorter`, `longer`, `increasing`, `decreasing`). Open UI resolves these
+(`shorter`, `longer`, `increasing`, `decreasing`). Div resolves these
 colors with the same math, step by step, as the Chromium version it is
 compared with.
 
@@ -91,10 +91,10 @@ and `not-allowed`.
   return a property to its default, call `Element::remove_property`.
 - The `flex`, `background`, `outline` and `inset` shorthands.
 
-## Names that are Open UI's own
+## Names that are Div's own
 
 A few structured values that CSS writes inside one property are separate
-properties in Open UI, set from code: `filter-blur` and
+properties in Div, set from code: `filter-blur` and
 `filter-grayscale` for `filter`, `background-linear-gradient` and
 `background-layers` for backgrounds, `clip-path-inset` for `clip-path`,
 and the `-x` and `-y` radius axes. Each is in the properties reference

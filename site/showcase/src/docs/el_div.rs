@@ -6,7 +6,7 @@ pub fn example() -> ViewNode {
             "Notifications"
         </h2>
     };
-    // Tags carry no meaning in Open UI, so give the heading its role.
+    // Tags carry no meaning in Div, so give the heading its role.
     if let ViewNode::Element(h2) = &title {
         h2.set_accessibility_role(AccessibilityRole::Heading).unwrap();
     }

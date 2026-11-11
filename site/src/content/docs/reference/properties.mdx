@@ -1,6 +1,6 @@
 ---
 title: Properties
-description: Every style property Open UI supports on main, the literal values view! accepts for it, and its Rust type.
+description: Every style property Div supports on main, the literal values view! accepts for it, and its Rust type.
 tableOfContents:
   maxHeadingLevel: 2
 ---
@@ -8,12 +8,12 @@ tableOfContents:
 import { Aside } from '@astrojs/starlight/components';
 import PropertyTable from '../../../components/PropertyTable.astro';
 
-Open UI supports **258** CSS properties. **207** of them can be written as
+Div supports **258** CSS properties. **207** of them can be written as
 a literal in `view!` (`style:prop="…"`); the other 51 take structured
 values, such as shadows, gradients and grid placements, and are set from
 code with their setter.
 
-These tables are generated from Open UI's own code: a small program
+These tables are generated from Div's own code: a small program
 (`site/tools/style-table`) runs the style parser on `main` over a fixed
 set of test values for every property, so each table says what the parser
 accepts, not what CSS allows.
@@ -34,12 +34,12 @@ Two abbreviations keep the tables short:
   that property rejects.
 - **C** is a color: hex, `rgb()` and `rgba()`, a named color (including
   `transparent`), `currentcolor`, `oklab()`, `oklch()` or `color-mix()`.
-  See [values and units](/open-ui/reference/values/#colors).
+  See [values and units](/reference/values/#colors).
 
 <Aside type="note">
 A property that is listed here is parsed, computed and stored. Whether it
 also changes layout or paint in every case is a separate question: the
-[Rendering](/open-ui/docs/rendering/) page explains how that is tested,
+[Rendering](/docs/rendering/) page explains how that is tested,
 and element pages note the gaps that matter for apps.
 </Aside>
 

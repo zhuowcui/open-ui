@@ -12,7 +12,7 @@ most, for every container, row, column and card.
 
 Fifteen other tags create **the same element**: `main`, `nav`, `header`,
 `footer`, `section`, `article`, `aside`, `p`, `h1` to `h6` and `hr`. Pick
-the one that makes your markup easy to read; Open UI treats them all as a
+the one that makes your markup easy to read; Div treats them all as a
 `div`. A heading is not larger or bold, a paragraph has no margins, and an
 `<hr>` draws nothing until you give it a border.
 
@@ -24,7 +24,7 @@ the one that makes your markup easy to read; Open UI treats them all as a
 
 Only the attributes every element takes: `id`, `class` (lookup only),
 `lang`, `tabindex`, `aria-label`, `aria-description`, `aria-hidden` and your
-own `data-*`. See [all elements](/open-ui/elements/#attributes-every-element-takes).
+own `data-*`. See [all elements](/elements/#attributes-every-element-takes).
 
 ## Events
 
@@ -44,7 +44,7 @@ Every layout and paint property applies. The ones you will set most:
   `opacity`.
 - **Layout of children:** `display="flex"` or `display="grid"` with `gap`,
   `align-items`, `justify-content` and the grid templates; see
-  [Layout](/open-ui/docs/concepts/layout/).
+  [Layout](/docs/concepts/layout/).
 - **Text:** `font-size`, `font-weight`, `line-height`; these inherit into
   the text inside.
 
@@ -62,7 +62,7 @@ For a rule, give `<hr>` a border:
 
 ## Accessibility
 
-The role is `GenericContainer` for every one of these tags: Open UI does
+The role is `GenericContainer` for every one of these tags: Div does
 not know that an `<h2>` is a heading or a `<nav>` is navigation. Set the
 role on the element when it matters, as the example does for its heading:
 
@@ -77,7 +77,7 @@ text of its own.
 
 ## Differences from HTML
 
-| HTML | Open UI |
+| HTML | Div |
 | --- | --- |
 | Headings are large and bold; `p` has margins; `hr` draws a line | No default styles: all of them are a plain block |
 | Each tag has a semantic role (heading, navigation, main…) | All are `GenericContainer`; set the role yourself |

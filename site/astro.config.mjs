@@ -1,16 +1,17 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
+import { name, repo, siteUrl } from './src/lib/project.mjs';
 
-// Served from GitHub Pages as a project site:
-// https://zhuowcui.github.io/open-ui/
+// Served from GitHub Pages at the domain root, https://div.build/
+// (public/CNAME names the domain).
 export default defineConfig({
-  site: 'https://zhuowcui.github.io',
-  base: '/open-ui',
+  site: siteUrl,
+  base: '/',
   trailingSlash: 'ignore',
   integrations: [
     starlight({
-      title: 'Open UI',
+      title: name,
       description:
         'Native desktop apps in Rust, styled with the CSS you know. No webview, one binary.',
       favicon: '/favicon.svg',
@@ -20,10 +21,10 @@ export default defineConfig({
         SocialIcons: './src/components/HeaderLinks.astro',
       },
       social: [
-        { icon: 'github', label: 'GitHub', href: 'https://github.com/zhuowcui/open-ui' },
+        { icon: 'github', label: 'GitHub', href: repo },
       ],
       editLink: {
-        baseUrl: 'https://github.com/zhuowcui/open-ui/edit/main/site/',
+        baseUrl: `${repo}/edit/main/site/`,
       },
       head: [
         { tag: 'meta', attrs: { name: 'color-scheme', content: 'light dark' } },

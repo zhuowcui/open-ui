@@ -3,7 +3,7 @@ title: Roadmap
 description: What is in the first alpha and what comes next.
 ---
 
-Open UI is in its first alpha. Dates are not promised, and the plan can
+Div is in its first alpha. Dates are not promised, and the plan can
 change.
 
 ## alpha.1: Windows and Linux

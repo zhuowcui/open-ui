@@ -7,9 +7,9 @@ import Icon from '../components/Icon.astro';
 import Compare from '../components/Compare.astro';
 import CopyCommand from '../components/CopyCommand.astro';
 import exampleSource from '../../showcase/src/example.rs?raw';
-import { base, nav, repo, install } from '../lib/site';
+import { base, nav, repo, install, name, siteUrl } from '../lib/site';
 
-const title = 'Open UI: native desktop apps in Rust, styled with CSS';
+const title = 'Div: native desktop apps in Rust, styled with CSS';
 const description =
   'Build native desktop apps in Rust with markup and the CSS you already know. No webview, no JavaScript, one binary. An alpha for Windows and Linux.';
 
@@ -22,7 +22,7 @@ const features = [
   {
     icon: 'app-window',
     title: 'Native, no webview',
-    body: 'Open UI lays out and paints your views itself, with Skia. You ship one executable, not a browser.',
+    body: 'Div lays out and paints your views itself, with Skia. You ship one executable, not a browser.',
   },
   {
     icon: 'package-check',
@@ -66,6 +66,13 @@ const tiles = [
     <meta name="color-scheme" content="light dark" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={`${siteUrl}/`} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={`${siteUrl}/`} />
+    <meta name="twitter:card" content="summary" />
     <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
     <script is:inline>
       // The same setting as the docs (Starlight's theme select).
@@ -88,9 +95,9 @@ const tiles = [
     <a class="skip" href="#main">Skip to content</a>
     <header class="nav">
       <div class="container nav-inner">
-        <a class="brand" href={base} aria-label="Open UI home">
+        <a class="brand" href={base} aria-label="Div home">
           <img src={`${base}favicon.svg`} alt="" width="22" height="22" />
-          <span>Open UI</span>
+          <span>Div</span>
           <span class="alpha">alpha</span>
         </a>
         <nav class="nav-links" aria-label="Site">
@@ -117,7 +124,7 @@ const tiles = [
           </a>
           <h1>Native desktop apps in Rust, styled like the web.</h1>
           <p class="lede">
-            Write your interface with markup and the CSS you already know. Open UI lays it out and paints
+            Write your interface with markup and the CSS you already know. Div lays it out and paints
             it by the browser's rules, then ships it as one native binary. No webview, no JavaScript.
           </p>
           <div class="actions">
@@ -139,8 +146,8 @@ const tiles = [
             />
           </figure>
           <p class="shot-note">
-            An example app built from Open UI's elements, with Button and Badge from the component library.
-            Rendered by Open UI, like every app image on this site.
+            An example app built from Div's elements, with Button and Badge from the component library.
+            Rendered by Div, like every app image on this site.
           </p>
         </div>
       </section>
@@ -151,7 +158,7 @@ const tiles = [
           <p class="eyebrow">Write it</p>
           <h2>Markup and CSS, compiled to a native app</h2>
           <p class="section-lede">
-            Views are Rust functions that build Open UI's native elements: <code>div</code>, <code>span</code>,
+            Views are Rust functions that build Div's native elements: <code>div</code>, <code>span</code>,
             <code>button</code>, <code>input</code> and the rest. Styles are CSS, checked when you build.
           </p>
           <div class="split">
@@ -164,7 +171,7 @@ const tiles = [
               <div class="result-stage">
                 <Shot name="example" alt="A card titled Production with a Live badge, a line of text and two buttons, Redeploy and View logs" />
               </div>
-              <p class="pane-note">Drawn by Open UI from the code on the left.</p>
+              <p class="pane-note">Drawn by Div from the code on the left.</p>
             </div>
           </div>
           <a class="more" href={`${base}elements/`}>Browse the elements <Icon name="arrow-right" size={16} /></a>
@@ -223,7 +230,7 @@ const tiles = [
             <p class="eyebrow">Fidelity</p>
             <h2>Looks like the web</h2>
             <p>
-              The card from the example, drawn by Chrome from HTML and by Open UI from Rust. Drag to
+              The card from the example, drawn by Chrome from HTML and by Div from Rust. Drag to
               compare: boxes, borders and colors match, and text can still land a pixel off.
             </p>
             <a class="more" href={`${base}docs/rendering/`}>How rendering is checked <Icon name="arrow-right" size={16} /></a>
@@ -250,7 +257,7 @@ const tiles = [
         <div class="footer-brand">
           <a class="brand" href={base}>
             <img src={`${base}favicon.svg`} alt="" width="20" height="20" />
-            <span>Open UI</span>
+            <span>Div</span>
           </a>
           <p>An experimental alpha. Apache-2.0.</p>
         </div>
@@ -275,8 +282,7 @@ const tiles = [
         </div>
       </div>
       <div class="container fine">
-        “Open UI” is a working name; the project is unrelated to the W3C Open UI Community Group. This
-        site is HTML; the app images on it are rendered by Open UI.
+        This site is HTML; the app images on it are rendered by Div.
       </div>
     </footer>
 

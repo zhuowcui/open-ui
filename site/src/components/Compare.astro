@@ -10,16 +10,16 @@ const size = { width: openui.width / 2, height: openui.height / 2 };
 <figure class="compare" style="--split: 50%">
   <div class="stage">
     <img src={chromium.src} {...size} alt="The card rendered by Chrome" />
-    <img class="top" src={openui.src} {...size} alt="The same card rendered by Open UI" />
+    <img class="top" src={openui.src} {...size} alt="The same card rendered by Div" />
     <div class="line" aria-hidden="true"><span></span></div>
     <span class="tag left">Chrome</span>
-    <span class="tag right">Open UI</span>
+    <span class="tag right">Div</span>
     <input
       type="range"
       min="0"
       max="100"
       value="50"
-      aria-label="Compare Chrome (left) with Open UI (right)"
+      aria-label="Compare Chrome (left) with Div (right)"
       aria-valuetext="Half and half"
     />
   </div>
@@ -31,7 +31,7 @@ const size = { width: openui.width / 2, height: openui.height / 2 };
     const update = () => {
       const value = Number(input.value);
       figure.style.setProperty('--split', `${value}%`);
-      input.setAttribute('aria-valuetext', `${value}% Chrome, ${100 - value}% Open UI`);
+      input.setAttribute('aria-valuetext', `${value}% Chrome, ${100 - value}% Div`);
     };
     input.addEventListener('input', update);
   }

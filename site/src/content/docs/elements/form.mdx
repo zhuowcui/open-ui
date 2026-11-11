@@ -7,7 +7,7 @@ import ElementTable from '../../../components/ElementTable.astro';
 import Example from '../../../components/Example.astro';
 
 In a browser, a form collects its controls' values and sends them
-somewhere. Open UI apps have no server to post to, so `<form>` does less:
+somewhere. Div apps have no server to post to, so `<form>` does less:
 it is a block that **owns** the controls inside it, which scopes radio
 groups, and gives each control an `associated_form()`.
 
@@ -37,7 +37,7 @@ The role is `Form`.
 
 ## Differences from HTML
 
-| HTML | Open UI |
+| HTML | Div |
 | --- | --- |
 | `submit` and `reset` events, navigation | None |
 | `action`, `method`, `FormData` | None: read the controls yourself |

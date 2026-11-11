@@ -11,7 +11,7 @@ needs the `menu` feature.
 
 <Snippet name="menus" title="src/main.rs" />
 
-The function you pass builds the menu. Open UI calls it for each window,
+The function you pass builds the menu. Div calls it for each window,
 and again whenever a signal it reads changes, so check marks and enabled
 states follow your state.
 
@@ -52,7 +52,7 @@ thing:
 ## Platforms
 
 On **Windows** the menu bar is the native Win32 menu bar. On **Linux**
-Open UI draws it at the top of the window. There, a click, F10 or Alt with
+Div draws it at the top of the window. There, a click, F10 or Alt with
 a mnemonic opens it, and the arrow keys, Enter, Space and Escape move
 through it.
 

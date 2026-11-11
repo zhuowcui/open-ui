@@ -1,6 +1,6 @@
 ---
 // A docs example: the Rust source of site/showcase/src/docs/<name>.rs and
-// the image Open UI rendered from it (site/showcase, scene `docs-<name>`).
+// the image Div rendered from it (site/showcase, scene `docs-<name>`).
 // The source shown is the whole file the renderer compiles.
 import { Code } from '@astrojs/starlight/components';
 import Shot from './Shot.astro';
@@ -27,7 +27,7 @@ const code = (skipImports ? raw.replace(/^(use [^\n]*\n)+\n?/, '') : raw).trimEn
     <Code code={code} lang="rust" />
   </div>
   <div class="ou-example-result">
-    <span class="ou-example-label">Rendered by Open UI</span>
+    <span class="ou-example-label">Rendered by Div</span>
     <Shot name={`docs-${name}`} alt={alt} />
   </div>
 </figure>

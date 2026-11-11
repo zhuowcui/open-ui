@@ -1,4 +1,4 @@
-# Rebuild the site's screenshots with Open UI (Windows).
+# Rebuild the site's screenshots with Div (Windows).
 #
 #   powershell -File site\showcase\render.ps1 [scene...]
 #
