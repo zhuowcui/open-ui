@@ -72,11 +72,42 @@ every item.
 | Layout crate | `cargo test -p openui-layout --no-fail-fast` (Windows) | 5,956 passed, 0 failed, 5 ignored |
 | Generators | `generate_properties.py --check`; `generate_v02_contract.py --check`; `generate_renderer_contract.py --check` | no drift |
 | `cargo fmt --all --check` | in `bindings/rust` | pass |
+| Paired expanded census (WSL) | `wsl-branch-census-a8.sh`, base `9d7bccf6` | 22,517 of 23,728 exact before and after; 0 changed |
+| CSS Grid coverage (WSL) | coverage matrix, base `04d1eeab` | 2,218 → 2,246 of 4,204 exact: 28 gained, 0 lost; the other 68 changed images all have fewer mismatched pixels |
 
 The expected boxes are written into the test from the oracle JSON; the
 layout crate has no JSON parser as a dependency.
 
-CENSUS
+The paired expanded census in WSL has no change. The base is `9d7bccf6`,
+the recorded census base; the head is `9f8e5dba`, this change. Both are
+built with the CI `SKIA_GN_ARGS` and share one Chromium cache. Chromium
+and Open UI are each identical in all 23,728 comparisons: 22,517 exact
+before and after, with nothing gained or lost. The delta is in the
+[census evidence](evidence/grid-placement-cursor-census-v1.json).
+
+The CSS Grid coverage suite gains 28 exact comparisons and loses none
+([coverage evidence](evidence/grid-placement-cursor-coverage-v1.json)).
+The base is `04d1eeab`, the recorded coverage baseline; the head is
+`9f8e5dba`. Of 4,204 measured comparisons, 2,218 were exact before and
+2,246 after. The gains are seven tests in all four profiles:
+`grid-percent-cols-filled-shrinkwrap-001` and its reference, the
+reference of `grid-percent-rows-filled-shrinkwrap-001`, and the
+references of `subgrid/grid-gap-004`, `grid-gap-larger-001`,
+`grid-gap-normal-001` and `grid-gap-smaller-001`. Open UI's image changed
+in 68 other comparisons that stay different, and every one has fewer
+mismatched pixels than before (for example
+`alignment/grid-self-alignment-baseline-with-grid-002` at 800x600, 85,056
+to 83,456). The two references that the baseline lists as unmeasured,
+whose renderer memory is unbounded, are left out of both runs.
+
+The components track also built its card fixtures with this change and
+the two other layout changes on its branches
+(`engine/column-flex-min-size` and `engine/grid-auto-track-max`) applied
+together. In that preview every components layout matched Chromium
+(192 of 192 within 1/128 px, up from 184 with the other two alone); the
+card-action pages were the 8 that changed, and each has fewer mismatched
+pixels. That preview is the components track's own build with system
+FreeType, not a qualification run of this branch.
 
 ## Not done here
 
