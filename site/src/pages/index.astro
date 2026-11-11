@@ -12,9 +12,10 @@ import { base, nav, repo, install, name, siteUrl } from '../lib/site';
 import wordmark from '../assets/generated/brand/div-wordmark.svg?url';
 import wordmarkDark from '../assets/generated/brand/div-wordmark-dark.svg?url';
 
-const title = 'Div: native desktop apps in Rust, styled with CSS';
+const headline = 'Everything you love about web UI, none of the weight.';
+const title = 'Div: everything you love about web UI, none of the weight';
 const description =
-  'Build native desktop apps in Rust with markup and the CSS you already know. No webview, no JavaScript, one binary. An alpha for Windows and Linux.';
+  'Native desktop apps in Rust, written with the CSS you already know and shipped as a single native binary. No webview, no JavaScript. An alpha for Windows and Linux.';
 
 const features = [
   {
@@ -132,10 +133,10 @@ const tiles = [
             alpha.1 in progress · Windows and Linux
             <Icon name="arrow-right" size={14} />
           </a>
-          <h1>Native desktop apps in Rust, styled like the web.</h1>
+          <h1>{headline}</h1>
           <p class="lede">
-            Write your interface with markup and the CSS you already know. Div lays it out and paints
-            it by the browser's rules, then ships it as one native binary. No webview, no JavaScript.
+            Build native desktop apps in Rust with the CSS you already know, and ship them as a single
+            native binary. No webview, no JavaScript.
           </p>
           <div class="actions">
             <a class="button primary" href={`${base}docs/getting-started/`}>Get started</a>

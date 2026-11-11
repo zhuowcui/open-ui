@@ -13,7 +13,7 @@ export default defineConfig({
     starlight({
       title: name,
       description:
-        'Native desktop apps in Rust, styled with the CSS you know. No webview, one binary.',
+        'Native desktop apps in Rust, written with the CSS you already know and shipped as a single native binary. No webview, no JavaScript.',
       // The favicons, wordmarks and Open Graph image are copied from brand/
       // by scripts/sync-assets.mjs (hash-checked against scripts/assets.json).
       favicon: '/favicon.svg',
