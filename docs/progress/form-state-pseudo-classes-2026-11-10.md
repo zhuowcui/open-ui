@@ -47,12 +47,28 @@ and after each round
 | Touched crates | `cargo test -p openui-engine -p openui-style -p openui` (Windows) | 905 passed, 0 failed, 11 ignored |
 | Generators | `generate_properties.py --check`; `generate_v02_contract.py --check`; `generate_renderer_contract.py --check`; `check_platform_scoped_tests.py` | no drift |
 | `cargo fmt --all --check` | in `bindings/rust`, in WSL (on Windows the command line for all files is now too long; `cargo fmt -p <package> --check` passes for each of the 26 packages) | pass |
+| Paired expanded census (WSL) | `wsl-branch-census-a8.sh`, base `9d7bccf6` | 22,517 of 23,728 exact before and after; 0 changed |
+| CSS Grid coverage (WSL) | coverage matrix, base `04d1eeab` | 2,218 of 4,204 exact before and after; 0 changed |
 
 The native test makes each change with the engine's own call:
 `set_checked`, `set_indeterminate`, `set_control_value`, `set_attribute`
 and `remove_attribute`.
 
-CENSUS
+The paired expanded census in WSL has no change. The base is `9d7bccf6`,
+the recorded census base; the head is `049c3a75`, this change. Both are
+built with the CI `SKIA_GN_ARGS` and share one Chromium cache. Chromium
+and Open UI are each identical in all 23,728 comparisons: 22,517 exact
+before and after, with nothing gained or lost. No style rule reads the
+matcher yet, so this checks that rendering is unchanged. The delta is in
+the [census evidence](evidence/form-state-pseudo-classes-census-v1.json).
+
+The CSS Grid coverage suite has no change either
+([coverage evidence](evidence/form-state-pseudo-classes-coverage-v1.json)). The
+base is `04d1eeab`, the recorded coverage baseline; the head is `049c3a75`.
+In all 4,204 measured comparisons the status and the Open UI image are
+unchanged: 2,218 exact before and after. The two references that the
+baseline lists as unmeasured, whose renderer memory is unbounded, are left
+out of both runs.
 
 ## Not done here
 
