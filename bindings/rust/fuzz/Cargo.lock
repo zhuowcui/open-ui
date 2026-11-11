@@ -424,6 +424,18 @@ name = "openui-style"
 version = "0.2.0"
 dependencies = [
  "openui-geometry",
+ "openui-style-derive",
+ "proc-macro2",
+ "quote",
+]
+
+[[package]]
+name = "openui-style-derive"
+version = "0.2.0"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.119",
 ]
 
 [[package]]
