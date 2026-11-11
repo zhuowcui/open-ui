@@ -14,7 +14,7 @@ Results here are from this branch's tests unless marked otherwise.
 | A2 tokens and media | Not started; needs RFC 0002 |
 | A3 top layer and dialog | Not started |
 | A5 performance baseline | First internal baseline taken 9 November on one shared Windows host, outside the repository; not publishable. Finding: each dashboard relayout costs about 205 ms, all in layout; not yet profiled |
-| A6 real-font baseline | Not measured; fonts are the components track's C4 files (PR #94). WOFF2 decoding on every platform is PR #97 ([record](../woff2-decode-2026-11-09.md)) |
+| A6 real-font baseline | Not measured; fonts are the components track's C4 files (PR #94). WOFF2 decoding on every platform merged, PR #97 (`c4b2e42e`; [record](../woff2-decode-2026-11-09.md)) |
 
 ## Findings while writing RFC 0001
 
@@ -39,7 +39,7 @@ on branch `components/c4-assets` and the shared findings note.
   `platform_font_data` in `bindings/rust/openui-text/src/font/collection.rs`
   passes WOFF2 bytes to FreeType undecoded under `#[cfg(not(windows))]`; the
   census FreeType has no Brotli. Windows decodes with `wuff` first, and
-  Chromium always decodes. Owner: `openui-text`. Next engine PR.
+  Chromium always decodes. Owner: `openui-text`. Fixed by PR #97.
 - In a column flexbox, a text item with an installed real font lays out one
   word per line (7 words: 140px tall instead of 20px). Owner: layout or text
   intrinsic sizing. Unmeasured here.
@@ -57,6 +57,8 @@ on branch `components/c4-assets` and the shared findings note.
   passes 54 of 54 on Windows. Unsupported forms are rejected; remaining
   limits are in the record.
 - 10 November 2026, PR #95 merged (`ee46e350`).
+- 10 November 2026, PR #97 merged (`c4b2e42e`): WOFF and WOFF2 are
+  decoded to sfnt before the scaler on every platform.
 - 10 November 2026: `view!` style attributes emit typed constructors
   instead of run-time `parse_literal` calls, the first A1 step. Every
   property's initial value and 155 corpus literals are checked against
