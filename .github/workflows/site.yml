@@ -3,8 +3,8 @@ name: site
 # The project website in site/ (Astro and Starlight). Pull requests build
 # it; pushes to main build and deploy it to GitHub Pages. It never builds
 # Skia or Rust: the app screenshots are committed PNGs rendered by
-# site/showcase, and the fonts are copied and hash-checked by
-# site/scripts/sync-assets.mjs. The element table is checked against the
+# site/showcase, and the fonts and brand assets are copied and hash-checked
+# by site/scripts/sync-assets.mjs. The element table is checked against the
 # Rust source it is generated from (site/scripts/gen-reference.mjs), so a
 # change to those files also runs this workflow.
 
@@ -13,6 +13,7 @@ on:
     branches: [main]
     paths:
       - "site/**"
+      - "brand/**"
       - ".github/workflows/site.yml"
       - "bindings/rust/openui/src/element.rs"
       - "bindings/rust/openui-engine/src/lib.rs"
@@ -21,6 +22,7 @@ on:
   pull_request:
     paths:
       - "site/**"
+      - "brand/**"
       - ".github/workflows/site.yml"
       - "bindings/rust/openui/src/element.rs"
       - "bindings/rust/openui-engine/src/lib.rs"
@@ -43,13 +45,15 @@ jobs:
     env:
       ASTRO_TELEMETRY_DISABLED: "1"
     steps:
-      # Only the site, the fonts it copies (site/scripts/assets.json) and the
-      # Rust source the element table is generated from.
+      # Only the site, the fonts and brand assets it copies
+      # (site/scripts/assets.json) and the Rust source the element table is
+      # generated from.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           sparse-checkout: |
             site
             components/assets/fonts/geist
+            brand
             bindings/rust/openui/src
             bindings/rust/openui-engine/src
 

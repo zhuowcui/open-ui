@@ -27,8 +27,16 @@ npm run check-reference   # fail if elements.json is out of date (CI runs this)
 ```
 
 `dev` and `build` first run `scripts/sync-assets.mjs`, which copies Geist and
-Geist Mono from `components/assets/fonts/geist/` after checking the SHA-256
-recorded in `scripts/assets.json`.
+Geist Mono from `components/assets/fonts/geist/`, and the Div wordmarks,
+favicons, web manifest icons and Open Graph image from `brand/`, after
+checking the SHA-256 recorded in `scripts/assets.json`. When `brand/build.py`
+changes an asset, update its digest there. `public/site.webmanifest` is
+written by hand.
+
+The accent is Div blue (`#266efb`), set in `src/styles/theme.css`. It has
+4.46:1 on both backgrounds, so it is used for graphics only; text uses a
+lighter tint in dark (`#518bfc`) and a darker shade in light (`#2161dd`),
+each at least 4.5:1.
 
 ## Screenshots
 

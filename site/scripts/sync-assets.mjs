@@ -1,4 +1,5 @@
-// Copies the fonts the site uses from this repository, unmodified.
+// Copies the fonts and the Div brand assets the site uses from this
+// repository, unmodified.
 //
 //   node scripts/sync-assets.mjs           copy
 //   node scripts/sync-assets.mjs --check   verify only; write nothing
@@ -18,7 +19,7 @@ const checkOnly = process.argv.includes('--check');
 const manifest = JSON.parse(readFileSync(join(siteRoot, 'scripts/assets.json'), 'utf8'));
 
 const failures = [];
-for (const font of manifest.fonts) {
+for (const font of [...manifest.fonts, ...manifest.brand]) {
   const bytes = readFileSync(join(repoRoot, font.source));
   const digest = createHash('sha256').update(bytes).digest('hex');
   if (digest !== font.sha256) {

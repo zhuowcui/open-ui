@@ -14,8 +14,15 @@ export default defineConfig({
       title: name,
       description:
         'Native desktop apps in Rust, styled with the CSS you know. No webview, one binary.',
+      // The favicons, wordmarks and Open Graph image are copied from brand/
+      // by scripts/sync-assets.mjs (hash-checked against scripts/assets.json).
       favicon: '/favicon.svg',
-      logo: { src: './src/assets/logo.svg' },
+      logo: {
+        light: './src/assets/generated/brand/div-wordmark.svg',
+        dark: './src/assets/generated/brand/div-wordmark-dark.svg',
+        alt: name,
+        replacesTitle: true,
+      },
       customCss: ['./src/styles/fonts.css', './src/styles/theme.css'],
       components: {
         SocialIcons: './src/components/HeaderLinks.astro',
@@ -28,6 +35,13 @@ export default defineConfig({
       },
       head: [
         { tag: 'meta', attrs: { name: 'color-scheme', content: 'light dark' } },
+        { tag: 'link', attrs: { rel: 'icon', href: '/favicon.ico', sizes: '32x32' } },
+        { tag: 'link', attrs: { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' } },
+        { tag: 'link', attrs: { rel: 'manifest', href: '/site.webmanifest' } },
+        { tag: 'meta', attrs: { property: 'og:image', content: `${siteUrl}/og-image.png` } },
+        { tag: 'meta', attrs: { property: 'og:image:width', content: '1200' } },
+        { tag: 'meta', attrs: { property: 'og:image:height', content: '630' } },
+        { tag: 'meta', attrs: { property: 'og:image:alt', content: 'The Div logo' } },
       ],
       sidebar: [
         {

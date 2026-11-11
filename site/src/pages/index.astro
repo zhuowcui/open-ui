@@ -8,6 +8,9 @@ import Compare from '../components/Compare.astro';
 import CopyCommand from '../components/CopyCommand.astro';
 import exampleSource from '../../showcase/src/example.rs?raw';
 import { base, nav, repo, install, name, siteUrl } from '../lib/site';
+// Copied from brand/ by scripts/sync-assets.mjs.
+import wordmark from '../assets/generated/brand/div-wordmark.svg?url';
+import wordmarkDark from '../assets/generated/brand/div-wordmark-dark.svg?url';
 
 const title = 'Div: native desktop apps in Rust, styled with CSS';
 const description =
@@ -72,8 +75,15 @@ const tiles = [
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={`${siteUrl}/`} />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:image" content={`${siteUrl}/og-image.png`} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="The Div logo" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href={`${base}favicon.ico`} sizes="32x32" />
     <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
+    <link rel="apple-touch-icon" href={`${base}apple-touch-icon.png`} />
+    <link rel="manifest" href={`${base}site.webmanifest`} />
     <script is:inline>
       // The same setting as the docs (Starlight's theme select).
       (() => {
@@ -96,8 +106,8 @@ const tiles = [
     <header class="nav">
       <div class="container nav-inner">
         <a class="brand" href={base} aria-label="Div home">
-          <img src={`${base}favicon.svg`} alt="" width="22" height="22" />
-          <span>Div</span>
+          <img class="wordmark ou-light" src={wordmark} alt="" width="49" height="22" />
+          <img class="wordmark ou-dark" src={wordmarkDark} alt="" width="49" height="22" />
           <span class="alpha">alpha</span>
         </a>
         <nav class="nav-links" aria-label="Site">
@@ -255,9 +265,9 @@ const tiles = [
     <footer class="footer">
       <div class="container footer-inner">
         <div class="footer-brand">
-          <a class="brand" href={base}>
-            <img src={`${base}favicon.svg`} alt="" width="20" height="20" />
-            <span>Div</span>
+          <a class="brand" href={base} aria-label="Div home">
+            <img class="wordmark ou-light" src={wordmark} alt="" width="45" height="20" />
+            <img class="wordmark ou-dark" src={wordmarkDark} alt="" width="45" height="20" />
           </a>
           <p>An experimental alpha. Apache-2.0.</p>
         </div>
@@ -396,6 +406,13 @@ const tiles = [
     font-weight: 600;
     text-decoration: none;
     letter-spacing: -0.01em;
+  }
+  .brand .wordmark {
+    width: auto;
+    height: 22px;
+  }
+  .footer-brand .wordmark {
+    height: 20px;
   }
   .alpha {
     font-family: var(--sl-font-mono);
@@ -628,7 +645,7 @@ const tiles = [
     font-weight: 500;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--ou-accent);
+    color: var(--ou-accent-text);
   }
   h2 {
     margin: 12px 0 0;
@@ -786,7 +803,7 @@ const tiles = [
     text-decoration: none;
   }
   .more:hover {
-    color: var(--ou-accent);
+    color: var(--ou-accent-text);
   }
 
   /* Fidelity */
