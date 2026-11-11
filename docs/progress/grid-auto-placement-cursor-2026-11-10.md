@@ -69,7 +69,7 @@ every item.
 | --- | --- | --- |
 | Chromium oracle | `python tools/qualification/capture_grid_placement_oracle.py --chrome E:\open-ui\out\chrome-win\win-147.0.7727.50\chrome-win64\chrome.exe` | 4 cases, table above |
 | The four cases against the oracle | `cargo test -p openui-layout --test grid_auto_placement_cursor_tests` (Windows) | 4 passed. With the old `place_items` all 4 fail, with the "Open UI before" boxes above |
-| Layout crate | `cargo test -p openui-layout --no-fail-fast` (Windows) | 5,956 passed, 0 failed, 5 ignored |
+| Layout crate | `cargo test -p openui-layout --no-fail-fast` (Windows) | 5,956 passed, 0 failed, 5 ignored, and the same after rebasing onto `main` at `c4b2e42e` |
 | Generators | `generate_properties.py --check`; `generate_v02_contract.py --check`; `generate_renderer_contract.py --check` | no drift |
 | `cargo fmt --all --check` | in `bindings/rust` | pass |
 | Paired expanded census (WSL) | `wsl-branch-census-a8.sh`, base `9d7bccf6` | 22,517 of 23,728 exact before and after; 0 changed |
