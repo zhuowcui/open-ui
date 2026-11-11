@@ -21,6 +21,30 @@ renderer.
 Each fixture is compared at the four census profiles (`legacy-800x600@1`,
 `mobile-375x667@2`, `desktop-1280x720@1.25`, `desktop-1920x1080@1.5`).
 
+## 11 November 2026: theme tokens as `oklch()`
+
+### Change
+
+| Change | Owner | Source |
+| --- | --- | --- |
+| Each theme token is now shadcn's own value, an `oklch()` color (`Token`), which Open UI resolves since #95, in place of the sRGB stand-in floats. Tailwind's opacity modifier is the real `color-mix(in oklab, <token> N%, transparent)`. Custom properties are still missing, so the token's value is written where shadcn writes `var(--token)`. | components | `components/openui-components/src/theme.rs`, `src/css.rs` |
+| The theme test checks each token's value against the value Chromium's page specifies, and the color Open UI resolves it to against Chromium's serialized sRGB color (six significant digits). | components | `components/openui-components/tests/theme_evidence.rs` |
+
+### Measurement
+
+All 192 Open UI images are byte-identical to the ones in
+[`reference-v1.json`](../../../components/evidence/reference-v1.json),
+measured at `916d2735`, so the comparison results are unchanged and the
+evidence was not measured again.
+
+### Verification
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Images unchanged | the release renderer, built in WSL with the CI `SKIA_GN_ARGS`, renders every fixture at the four profiles in the census environment, and each image's RGBA bytes are compared with the `openui.png` of the 916d2735 run; repeated on this branch rebased on main `c48c2e38` (#111) | 192 of 192 identical |
+| Workspace tests | `cargo test --locked` in `components/`, on Windows and, rebased on `c48c2e38`, in WSL | 10 passed |
+| Formatting | `cargo fmt --all --check` in `components/`, in WSL | clean |
+
 ## 11 November 2026: measured on main after A2 colors and WOFF2
 
 ### Change
@@ -316,8 +340,8 @@ These are API requests for the framework track, not blockers.
 
 ## Next
 
-1. Replace the sRGB stand-ins with real `oklch()` and `color-mix()`
-   values, now that Open UI parses them.
+1. Theme tokens as custom properties, and `.dark` as a class, once typed
+   style rules and tokens (A1, A2) land.
 2. Build the Radix-like primitives (C2) as proposed in
    [RFC 0003](../../alpha/rfcs/0003-component-primitives.md), once the
    framework and engine tracks have reviewed its requests, then tabs,

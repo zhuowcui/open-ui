@@ -61,7 +61,7 @@ python3 components/harness/reference_harness.py compare \
 ```
 
 Record Chromium's sRGB values of the theme tokens (rerun when the theme
-changes, then update `openui-components/src/theme.rs`; a test checks it):
+changes; a test checks `openui-components/src/theme.rs` against it):
 
 ```bash
 python3 components/harness/reference_harness.py tokens \
@@ -93,16 +93,16 @@ four at a time by default. Do not run them during a full census.
 
 ## Stand-ins
 
-Until the engine parses `oklch()` and custom properties, each theme token is
-the sRGB color Chromium computes for it, kept as the unclamped floats
-Chromium serializes (`evidence/theme-tokens-v1.json`): Chromium paints from
-those floats, so rounding them to 8 bits first would change blended pixels.
-Out-of-gamut tokens (`destructive` and the chart colors) have channels
-outside [0, 1]. Tailwind's opacity modifier (`bg-input/30`, which compiles
-to `color-mix(in oklab, var(--input) 30%, transparent)`) is the token with
-its alpha scaled (`css::with_opacity`), and `Theme::dark` stands in for the
-`.dark` class that switches Tailwind's `dark:` variants. These are marked
-STAND-IN in the source and are to be replaced by typed theme tokens.
+Each theme token is the value shadcn's `globals.css` gives it, an
+`oklch()` color (`Token` in `openui-components/src/theme.rs`), and Open UI
+resolves it as Chromium 147 does; a test checks each one against the sRGB
+color Chromium computes (`evidence/theme-tokens-v1.json`). Until the engine
+has custom properties, components write the token's value where shadcn
+writes `var(--token)`: Tailwind's opacity modifier (`bg-input/30`) is
+`color-mix(in oklab, <token> 30%, transparent)` (`css::with_opacity`), and
+`Theme::dark` stands in for the `.dark` class that switches Tailwind's
+`dark:` variants. These are marked STAND-IN in the source and are to be
+replaced by typed theme tokens.
 
 ## Styles
 
