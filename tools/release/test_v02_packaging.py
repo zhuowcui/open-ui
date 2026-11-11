@@ -211,7 +211,7 @@ class V02PackagingTests(unittest.TestCase):
 
     def test_public_release_graph_and_targets_are_frozen(self) -> None:
         self.assertEqual(release.VERSION, "0.2.0")
-        self.assertEqual(len(release.PUBLIC_CRATES), 11)
+        self.assertEqual(len(release.PUBLIC_CRATES), 12)
         self.assertEqual(
             set(release.SUPPORTED_TARGETS),
             {"x86_64-unknown-linux-gnu", "aarch64-unknown-linux-gnu"},
