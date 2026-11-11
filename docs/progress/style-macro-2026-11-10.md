@@ -39,7 +39,7 @@ single-quoted strings.
 | Block parser | `cargo test -p openui-style --features constructor-tokens --lib declaration_block` (Windows) | 9 passed |
 | Macro expansion and errors | `cargo test -p openui-macros style_macro` | 8 passed |
 | `style!` against the runtime parse, applied to an element | `cargo test -p openui --test style_macro` | 6 passed |
-| Touched crates | `cargo test -p openui-style -p openui-style-derive -p openui-macros -p openui` (Windows) | 427 passed, 0 failed; after rebasing onto `main` with PR #95, 448 passed, 0 failed, 12 ignored, and the same after rebasing onto PR #97 and again onto the rewritten typed style constructors (PR #109, head `9078594c`) |
+| Touched crates | `cargo test -p openui-style -p openui-style-derive -p openui-macros -p openui` (Windows) | 427 passed, 0 failed; after rebasing onto `main` with PR #95, 448 passed, 0 failed, 12 ignored, and the same after rebasing onto PR #97 and again onto the rewritten typed style constructors (PR #109, head `9078594c`) and onto the rustix update (PR #116, `e80a0bc2`) |
 | Generators | `generate_properties.py --check`; `generate_v02_contract.py --check`; `generate_renderer_contract.py --check` | no drift |
 | `cargo fmt --all --check` | in `bindings/rust` | pass |
 | Paired expanded census | `build_renderer.py`; `run_renderer_matrix.py --suite expanded --jobs 16`, with the CI `SKIA_GN_ARGS` | 22,517 to 22,517 exact; 0 of 23,728 Open UI images changed |

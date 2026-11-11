@@ -68,3 +68,5 @@ on branch `components/c4-assets` and the shared findings note.
 - 10 November 2026, PR #109 merged (`acd090c8`).
 - 10 November 2026: `style!` compiles a CSS declaration block to typed
   styles at compile time, the second A1 step. [Record](../style-macro-2026-11-10.md).
+- 11 November 2026, PR #116 merged (`e80a0bc2`): `rustix` 1.1.6 fixes
+  RUSTSEC-2026-0486, which failed `dependency-security` on every PR.
