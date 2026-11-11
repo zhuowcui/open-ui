@@ -9,6 +9,10 @@ use openui_geometry::WritingDirectionMode;
 /// Blink stores this in 6 bits (35 values). We implement the commonly used subset.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum Display {
     /// `display: none` — element generates no boxes.
     None = 0,
@@ -47,6 +51,10 @@ pub enum Display {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum ListStylePosition {
     Outside,
     Inside,
@@ -54,6 +62,10 @@ pub enum ListStylePosition {
 
 /// CSS `list-style-type` values currently needed by the layout/paint pipeline.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum ListStyleType {
     None,
     Disc,
@@ -151,6 +163,10 @@ impl Default for Display {
 /// Blink stores this in 3 bits (5 values).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum Position {
     Static = 0,
     Relative = 1,
@@ -188,6 +204,10 @@ impl Default for Position {
 /// Blink stores this in 3 bits (6 values).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum Overflow {
     Visible = 0,
     Hidden = 1,
@@ -219,6 +239,10 @@ impl Default for Overflow {
 /// CSS Basic UI `resize` property.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum Resize {
     None = 0,
     Both = 1,
@@ -241,6 +265,10 @@ impl Default for Resize {
 /// CSS Scrollbars `scrollbar-width` property.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum ScrollbarWidth {
     Auto = 0,
     Thin = 1,
@@ -260,6 +288,10 @@ impl Default for ScrollbarWidth {
 /// CSS Overflow `scrollbar-gutter` property, including `both-edges`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum ScrollbarGutter {
     Auto = 0,
     Stable = 1,
@@ -290,6 +322,10 @@ impl Default for ScrollbarGutter {
 /// Blink stores this in 1 bit.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum BoxSizing {
     ContentBox = 0,
     BorderBox = 1,
@@ -309,6 +345,10 @@ impl Default for BoxSizing {
 /// Blink stores this in 3 bits.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum Float {
     None = 0,
     Left = 1,
@@ -329,6 +369,10 @@ impl Default for Float {
 /// Blink stores this in 3 bits.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum Clear {
     None = 0,
     Left = 1,
@@ -350,6 +394,10 @@ impl Default for Clear {
 /// Blink stores this in 4 bits (10 values).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum BorderStyle {
     None = 0,
     Hidden = 1,
@@ -382,6 +430,10 @@ impl Default for BorderStyle {
 /// CSS `text-align` property.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum TextAlign {
     Left = 0,
     Right = 1,
@@ -404,6 +456,10 @@ impl Default for TextAlign {
 /// CSS `direction` property (inherited).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum Direction {
     Ltr = 0,
     Rtl = 1,
@@ -446,6 +502,10 @@ impl WritingMode {
 /// CSS `visibility` property (inherited).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum Visibility {
     Visible = 0,
     Hidden = 1,
@@ -465,6 +525,10 @@ impl Default for Visibility {
 /// CSS `white-space` collapse mode.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum WhiteSpace {
     Normal = 0,
     Nowrap = 1,
@@ -491,6 +555,10 @@ impl Default for WhiteSpace {
 /// Source: core/css/css_properties.json5:3489
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum FlexDirection {
     Row = 0,
     RowReverse = 1,
@@ -523,6 +591,10 @@ impl Default for FlexDirection {
 /// Source: core/style/computed_style_constants.h:638
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum FlexWrap {
     Nowrap = 0,
     Wrap = 1,
@@ -553,6 +625,10 @@ impl Default for FlexWrap {
 /// Blink: `ContentPosition` in computed_style_constants.h:445 (4 bits).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum ContentPosition {
     Normal = 0,
     Baseline = 1,
@@ -580,6 +656,10 @@ impl Default for ContentPosition {
 /// Blink: `ContentDistributionType` in computed_style_constants.h:458 (3 bits).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum ContentDistribution {
     Default = 0,
     SpaceBetween = 1,
@@ -602,6 +682,10 @@ impl Default for ContentDistribution {
 /// Blink: `OverflowAlignment` in computed_style_constants.h:441 (2 bits).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum OverflowAlignment {
     Default = 0,
     Unsafe = 1,
@@ -622,6 +706,10 @@ impl Default for OverflowAlignment {
 /// Blink: `ItemPosition` in computed_style_constants.h:422 (4 bits).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum ItemPosition {
     Legacy = 0,
     Auto = 1,
@@ -654,6 +742,10 @@ impl Default for ItemPosition {
 /// Maps to Blink's `StyleContentAlignmentData` (style_content_alignment_data.h).
 /// Stores position (4 bits) + distribution (3 bits) + overflow (2 bits).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct ContentAlignment {
     pub position: ContentPosition,
     pub distribution: ContentDistribution,
@@ -697,6 +789,10 @@ impl Default for ContentAlignment {
 /// Maps to Blink's `StyleSelfAlignmentData` (style_self_alignment_data.h).
 /// Stores position (4 bits) + overflow (2 bits).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct ItemAlignment {
     pub position: ItemPosition,
     pub overflow: OverflowAlignment,
@@ -738,6 +834,10 @@ impl Default for ItemAlignment {
 /// CSS `line-height` computed value.
 /// Blink: `Length` with `kAuto` for `normal`, or a fixed/percentage value.
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum LineHeight {
     /// `normal` — typically ~1.2× font-size, computed by the font.
     Normal,
@@ -759,6 +859,10 @@ impl Default for LineHeight {
 /// Blink: `ETextAlignLast` in computed_style_constants.h.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum TextAlignLast {
     Auto = 0,
     Start = 1,
@@ -783,6 +887,10 @@ impl Default for TextAlignLast {
 /// Blink: `TextJustify` in computed_style_constants.h.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum TextJustify {
     Auto = 0,
     None = 1,
@@ -804,6 +912,10 @@ impl Default for TextJustify {
 /// Blink: `EWordBreak` in computed_style_constants.h.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum WordBreak {
     Normal = 0,
     BreakAll = 1,
@@ -827,6 +939,10 @@ impl Default for WordBreak {
 /// Blink: `EOverflowWrap` in computed_style_constants.h.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum OverflowWrap {
     Normal = 0,
     BreakWord = 1,
@@ -853,6 +969,10 @@ impl Default for OverflowWrap {
 /// CSS Text Module Level 3 §5.2 — <https://www.w3.org/TR/css-text-3/#line-break-property>
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum LineBreak {
     /// Default browser behavior. Blink maps this to default strictness (same
     /// as `Normal` in practice — no ICU keyword).
@@ -891,6 +1011,10 @@ impl Default for LineBreak {
 /// Blink: `Hyphens` in computed_style_constants.h.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum Hyphens {
     None = 0,
     Manual = 1,
@@ -910,6 +1034,10 @@ impl Default for Hyphens {
 /// CSS `text-decoration-line` — bitflag set.
 /// Blink: `TextDecorationLine` bitfield in `text_decoration.h`.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct TextDecorationLine(pub u8);
 
 impl TextDecorationLine {
@@ -946,6 +1074,10 @@ impl Default for TextDecorationLine {
 /// Blink: `ETextDecorationStyle` in computed_style_constants.h.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum TextDecorationStyle {
     Solid = 0,
     Double = 1,
@@ -967,6 +1099,10 @@ impl Default for TextDecorationStyle {
 /// CSS `text-decoration-thickness` computed value.
 /// Blink: `TextDecorationThickness` in `text_decoration_thickness.h`.
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum TextDecorationThickness {
     Auto,
     FromFont,
@@ -991,6 +1127,10 @@ impl Default for TextDecorationThickness {
 /// Per CSS spec, skip-ink does NOT apply to `line-through` decorations.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum TextDecorationSkipInk {
     /// No skipping — draw continuous decoration line.
     None = 0,
@@ -1015,6 +1155,10 @@ impl Default for TextDecorationSkipInk {
 /// Blink: `TextUnderlinePosition` in computed_style_constants.h.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum TextUnderlinePosition {
     Auto = 0,
     Under = 1,
@@ -1036,6 +1180,10 @@ impl Default for TextUnderlinePosition {
 /// Blink: `ETextTransform` in computed_style_constants.h.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum TextTransform {
     None = 0,
     Capitalize = 1,
@@ -1060,6 +1208,10 @@ impl Default for TextTransform {
 /// Blink: `ETextOverflow` in computed_style_constants.h.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum TextOverflow {
     Clip = 0,
     Ellipsis = 1,
@@ -1078,6 +1230,10 @@ impl Default for TextOverflow {
 /// CSS `vertical-align` computed value.
 /// Blink: `EVerticalAlign` enum + numeric offset in `ComputedStyle`.
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum VerticalAlign {
     Baseline,
     Sub,
@@ -1103,6 +1259,10 @@ impl Default for VerticalAlign {
 /// Blink: `UnicodeBidi` in computed_style_constants.h.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum UnicodeBidi {
     Normal = 0,
     Embed = 1,
@@ -1126,6 +1286,10 @@ impl Default for UnicodeBidi {
 /// Blink: `WritingMode` in computed_style_constants.h.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum WritingMode {
     HorizontalTb = 0,
     VerticalRl = 1,
@@ -1181,6 +1345,10 @@ impl Default for WritingMode {
 /// Blink: `ETextOrientation` in computed_style_constants.h.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum TextOrientation {
     Mixed = 0,
     Upright = 1,
@@ -1200,6 +1368,10 @@ impl Default for TextOrientation {
 /// CSS `text-shadow` value.
 /// Blink: `ShadowData` in `shadow_data.h`.
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct TextShadow {
     pub offset_x: f32,
     pub offset_y: f32,
@@ -1210,6 +1382,10 @@ pub struct TextShadow {
 /// CSS `tab-size` computed value.
 /// Blink: `TabSize` struct in `tab_size.h`.
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum TabSize {
     /// Number of spaces (CSS default: 8).
     Spaces(u32),
@@ -1232,6 +1408,10 @@ impl Default for TabSize {
 /// `force-end`/`allow-end` can appear together; `force-end` and `allow-end`
 /// are mutually exclusive.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct HangingPunctuation {
     /// `first` — opening bracket or quote at the start of the first line hangs.
     pub first: bool,
@@ -1273,6 +1453,10 @@ impl Default for HangingPunctuation {
 /// CSS Text Decoration Module Level 3 §3.4
 /// <https://www.w3.org/TR/css-text-decor-3/#text-emphasis-style-property>
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum TextEmphasisMark {
     /// No emphasis marks.
     None,
@@ -1329,6 +1513,10 @@ impl Default for TextEmphasisMark {
 /// <https://www.w3.org/TR/css-text-decor-3/#text-emphasis-style-property>
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum TextEmphasisFill {
     /// Filled marks (default per CSS spec).
     Filled = 0,
@@ -1354,6 +1542,10 @@ impl Default for TextEmphasisFill {
 /// CSS Text Decoration Module Level 3 §3.5
 /// <https://www.w3.org/TR/css-text-decor-3/#text-emphasis-position-property>
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct TextEmphasisPosition {
     /// `true` = over/above the text, `false` = under/below.
     /// Initial: `true` (over) for horizontal text.
@@ -1389,6 +1581,10 @@ impl Default for TextEmphasisPosition {
 /// <https://www.w3.org/TR/css-writing-modes-3/#text-combine-upright>
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum TextCombineUpright {
     /// No combination — characters rendered individually.
     None = 0,
@@ -1417,6 +1613,10 @@ impl Default for TextCombineUpright {
 /// Blink: `FontPalette` in `third_party/blink/renderer/platform/fonts/font_palette.h`.
 /// CSS Fonts Level 4: <https://drafts.csswg.org/css-fonts-4/#font-palette-prop>
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum FontPalette {
     /// Use the font's default palette (palette index 0).
     Normal,
@@ -1535,6 +1735,10 @@ pub fn font_orientation(
 /// <https://drafts.csswg.org/css-ruby-1/#ruby-position-property>
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum RubyPosition {
     /// Annotation appears above (horizontal) or to the right (vertical) of the
     /// base text. This is the default for Japanese furigana.
@@ -1577,6 +1781,10 @@ impl Default for RubyPosition {
 /// <https://drafts.csswg.org/css-ruby-1/#ruby-align-property>
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum RubyAlign {
     /// The content is expanded so that it is evenly distributed across the
     /// width of the ruby annotation box, with space inserted before the first
@@ -1612,6 +1820,10 @@ impl Default for RubyAlign {
 /// `page-break-before`/`page-break-after` properties.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum BreakValue {
     Auto = 0,
     Avoid = 1,
@@ -1670,6 +1882,10 @@ impl Default for BreakValue {
 /// Maps both modern `break-inside` and legacy `page-break-inside`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum BreakInside {
     Auto = 0,
     Avoid = 1,
@@ -1711,6 +1927,10 @@ impl Default for BreakInside {
 /// Controls whether columns are balanced or filled sequentially.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum ColumnFill {
     /// Balance column heights so they are approximately equal.
     Balance = 0,
@@ -1733,6 +1953,10 @@ impl Default for ColumnFill {
 /// CSS `column-wrap` property.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum ColumnWrap {
     /// Use the UA's automatic overflow behavior.
     Auto = 0,
@@ -1757,6 +1981,10 @@ impl Default for ColumnWrap {
 /// Blink: `EColumnSpan` in `computed_style_base_constants.h`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum ColumnSpan {
     /// Element does not span columns.
     None = 0,
@@ -1787,6 +2015,10 @@ impl Default for ColumnSpan {
 /// <https://www.w3.org/TR/css-break-3/#break-decoration>
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum BoxDecorationBreak {
     /// Decorations are sliced at breaks: only the first fragment gets
     /// inline-start MBP and only the last fragment gets inline-end MBP.
@@ -1820,6 +2052,10 @@ impl Default for BoxDecorationBreak {
 /// <https://drafts.csswg.org/css-text-4/#text-wrap>
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum TextWrap {
     /// Standard greedy line breaking (default).
     Wrap = 0,
@@ -1867,6 +2103,10 @@ impl Default for TextWrap {
 /// CSS Inline Level 3 §5:
 /// <https://drafts.csswg.org/css-inline-3/#sizing-drop-caps>
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct InitialLetter {
     /// Number of lines the initial letter should span (the size).
     /// E.g., `initial-letter: 3` means the letter is sized to span 3 lines.
@@ -1917,6 +2157,10 @@ impl InitialLetter {
 /// CSS Backgrounds and Borders Module Level 3 §3.5.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum BackgroundClip {
     /// Background is painted within the border-box (default).
     BorderBox = 0,
@@ -1939,6 +2183,10 @@ impl Default for BackgroundClip {
 /// CSS `background-attachment` property.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum BackgroundAttachment {
     Scroll = 0,
     Fixed = 1,
@@ -1955,6 +2203,10 @@ impl Default for BackgroundAttachment {
 /// Determines which box edge the clip-margin expands from.
 /// Default: `padding-box` (CSS Overflow 3 §3).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum OverflowClipBox {
     /// Clip expands from the content-box edge.
     ContentBox = 0,

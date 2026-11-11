@@ -21,6 +21,10 @@ use crate::typography::*;
 /// `aspect-ratio: 16/9` → `Some(AspectRatio { ratio: (16.0, 9.0), auto_flag: false })`.
 /// `aspect-ratio: auto 16/9` → `Some(AspectRatio { ratio: (16.0, 9.0), auto_flag: true })`.
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct AspectRatio {
     /// Width / height components. E.g., `(16.0, 9.0)` for 16:9.
     pub ratio: (f32, f32),
@@ -33,6 +37,10 @@ pub struct AspectRatio {
 ///
 /// CSS syntax: `[inset?] <offset-x> <offset-y> [<blur-radius>] [<spread-radius>] [<color>]`
 #[derive(Debug, Clone)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct BoxShadow {
     pub offset_x: f32,
     pub offset_y: f32,
@@ -47,6 +55,10 @@ pub struct BoxShadow {
 /// Replaced generated content (`url()`, gradients, and other CSS images) is
 /// deliberately not represented here; it remains owned by the image path.
 #[derive(Debug, Clone, PartialEq, Eq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum GeneratedContentItem {
     String(String),
     Attribute(String),
@@ -67,6 +79,10 @@ pub enum GeneratedContentItem {
 
 /// CSS2 counter styles used by generated-content tests.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum CounterStyle {
     Decimal,
     DecimalLeadingZero,
@@ -79,6 +95,10 @@ pub enum CounterStyle {
 /// One named operation in `counter-reset`, `counter-set`, or
 /// `counter-increment`.
 #[derive(Debug, Clone, PartialEq, Eq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct CounterOperation {
     pub name: String,
     pub value: i32,
@@ -86,6 +106,10 @@ pub struct CounterOperation {
 
 /// One nesting-level pair in the inherited CSS `quotes` property.
 #[derive(Debug, Clone, PartialEq, Eq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct QuotePair {
     pub open: String,
     pub close: String,
@@ -93,6 +117,10 @@ pub struct QuotePair {
 
 /// Computed modern/compatibility line clamp limit.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum LineClamp {
     None,
     Auto,
@@ -101,6 +129,10 @@ pub enum LineClamp {
 
 /// The marker appended at a line-clamp point.
 #[derive(Debug, Clone, PartialEq, Eq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum BlockEllipsis {
     Auto,
     NoEllipsis,
@@ -110,6 +142,10 @@ pub enum BlockEllipsis {
 /// Legacy WebKit box orientation. It is consumed only to activate the
 /// `-webkit-line-clamp` compatibility layout, not as old-flexbox support.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum WebkitBoxOrient {
     Horizontal,
     Vertical,
@@ -120,6 +156,10 @@ pub enum WebkitBoxOrient {
 /// its center area. `None` is the initial value and disables anchor-area
 /// positioning.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum PositionArea {
     None,
     TopLeft,
@@ -135,6 +175,10 @@ pub enum PositionArea {
 
 /// A resolved color stop in a CSS linear gradient.
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum GradientStopPosition {
     Auto,
     Percent(f32),
@@ -153,6 +197,10 @@ pub enum GradientStopPosition {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct LinearGradientStop {
     pub color: Color,
     pub position: GradientStopPosition,
@@ -161,6 +209,10 @@ pub struct LinearGradientStop {
 /// The single linear background-image layer currently consumed by paint.
 /// Angles use CSS conventions: 0deg points up and 90deg points right.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct LinearGradient {
     pub angle_degrees: f32,
     /// Whether this image was authored with `repeating-linear-gradient()`.
@@ -187,12 +239,20 @@ impl ImageResourceId {
 
 /// A resolved stop used by the production background-image model.
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct GradientStop {
     pub color: StyleColor,
     pub position: GradientStopPosition,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum GradientColorSpace {
     Srgb,
     Hsl,
@@ -200,6 +260,10 @@ pub enum GradientColorSpace {
 }
 
 #[derive(Debug, Clone)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct CssLinearGradient {
     pub angle_degrees: f32,
     /// Normalized keyword direction for `to <corner>`. Corner keywords are
@@ -213,6 +277,10 @@ pub struct CssLinearGradient {
 
 /// One component of a CSS background position.
 #[derive(Debug, Clone, Copy)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum BackgroundPosition {
     /// Percentage of the remaining space (`0%`, `50%`, `100%`).
     Percent(f32),
@@ -235,6 +303,10 @@ impl BackgroundPosition {
 
 /// Per-axis background tiling mode.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum BackgroundRepeat {
     Repeat,
     NoRepeat,
@@ -244,6 +316,10 @@ pub enum BackgroundRepeat {
 
 /// CSS background-size for one image layer.
 #[derive(Debug, Clone)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum BackgroundSize {
     Auto,
     Explicit(Length, Length),
@@ -253,6 +329,10 @@ pub enum BackgroundSize {
 
 /// Radial-gradient shape.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum RadialGradientShape {
     Circle,
     Ellipse,
@@ -260,6 +340,10 @@ pub enum RadialGradientShape {
 
 /// Radial-gradient extent or explicit radii.
 #[derive(Debug, Clone)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum RadialGradientSize {
     ClosestSide,
     ClosestCorner,
@@ -269,6 +353,10 @@ pub enum RadialGradientSize {
 }
 
 #[derive(Debug, Clone)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct RadialGradient {
     pub repeating: bool,
     pub color_space: GradientColorSpace,
@@ -280,6 +368,10 @@ pub struct RadialGradient {
 }
 
 #[derive(Debug, Clone)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct ConicGradient {
     /// CSS angle: 0deg points up and positive angles turn clockwise.
     pub from_degrees: f32,
@@ -292,7 +384,12 @@ pub struct ConicGradient {
 
 /// Paintable CSS image independent of the raster backend.
 #[derive(Debug, Clone)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum CssImage {
+    #[cfg_attr(feature = "constructor-tokens", constructor_tokens(unsupported))]
     Raster(ImageResourceId),
     LinearGradient(CssLinearGradient),
     RadialGradient(RadialGradient),
@@ -302,6 +399,10 @@ pub enum CssImage {
 /// One comma-separated CSS background layer. Layers remain in author order;
 /// paint traverses them back-to-front.
 #[derive(Debug, Clone)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct BackgroundLayer {
     pub image: CssImage,
     pub repeat_x: BackgroundRepeat,
@@ -332,6 +433,10 @@ impl BackgroundLayer {
 
 /// Number, length/percentage, or `auto` component used by border-image.
 #[derive(Debug, Clone)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum BorderImageLength {
     Number(f32),
     Length(Length),
@@ -339,6 +444,10 @@ pub enum BorderImageLength {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum BorderImageRepeat {
     Stretch,
     Repeat,
@@ -348,6 +457,10 @@ pub enum BorderImageRepeat {
 
 /// Computed nine-slice border-image metadata.
 #[derive(Debug, Clone)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct BorderImage {
     pub source: CssImage,
     pub slice: [BorderImageLength; 4],

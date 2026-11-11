@@ -15,6 +15,14 @@ fn property(prop: &str, span: Span) -> Result<openui_style::StyleProperty, Token
     })
 }
 
+/// An expression that builds `value` under `::openui::typed_style`.
+pub(crate) fn typed_value_tokens(value: &openui_style::StyleValue) -> Result<TokenStream, String> {
+    use openui_style::constructor_tokens::ConstructorTokens;
+    value
+        .constructor_tokens(&quote!(::openui::typed_style))
+        .map_err(|error| error.to_string())
+}
+
 fn property_tokens(value: openui_style::StyleProperty) -> TokenStream {
     let variant = format_ident!("{}", format!("{value:?}"));
     quote! { ::openui::typed_style::StyleProperty::#variant }
@@ -504,17 +512,21 @@ fn gen_attr_stmt(attr: &Attr) -> TokenStream {
                 Ok(value) => value,
                 Err(error) => return error,
             };
-            if let Err(error) = openui_style::parse_literal(property, &value.value()) {
-                return syn::Error::new(value.span(), error.to_string()).to_compile_error();
-            }
+            let parsed = match openui_style::parse_literal(property, &value.value()) {
+                Ok(parsed) => parsed,
+                Err(error) => {
+                    return syn::Error::new(value.span(), error.to_string()).to_compile_error()
+                }
+            };
+            // The literal is parsed here, once; the element receives the
+            // typed value through its constructors (RFC 0001).
+            let constructed = match typed_value_tokens(&parsed) {
+                Ok(tokens) => tokens,
+                Err(error) => return syn::Error::new(value.span(), error).to_compile_error(),
+            };
             let property = property_tokens(property);
-            let literal = value.value();
             quote_spanned! {*span=>
-                __el.set_property(
-                    #property,
-                    ::openui::typed_style::parse_literal(#property, #literal)
-                        .expect("validated typed style literal")
-                ).expect("set typed style");
+                __el.set_property(#property, #constructed).expect("set typed style");
             }
         }
         Attr::StyleDynamic { prop, expr, span } => {
@@ -1013,8 +1025,13 @@ mod tests {
         let output = generate(&body).to_string();
         assert!(output.contains("set_property"));
         assert!(output.contains("StyleProperty :: Padding"));
-        assert!(output.contains("parse_literal"));
-        assert!(output.contains("8px 16px"));
+        // Parsed once at compile time: the runtime receives constructors.
+        assert!(!output.contains("parse_literal"), "{output}");
+        assert!(output.contains("StyleValue :: Edges"), "{output}");
+        assert!(output.contains("Length :: px"), "{output}");
+        // 8.0_f32 and 16.0_f32 as bit patterns.
+        assert!(output.contains("1090519040u32"), "{output}");
+        assert!(output.contains("1098907648u32"), "{output}");
         assert!(!output.contains("set_style"));
     }
 

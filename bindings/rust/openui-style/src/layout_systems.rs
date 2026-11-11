@@ -12,6 +12,10 @@ use openui_geometry::Length;
 use crate::BackgroundPosition;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum TableLayout {
     #[default]
     Auto,
@@ -19,6 +23,10 @@ pub enum TableLayout {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum BorderCollapse {
     #[default]
     Separate,
@@ -26,6 +34,10 @@ pub enum BorderCollapse {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum CaptionSide {
     #[default]
     Top,
@@ -33,6 +45,10 @@ pub enum CaptionSide {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum EmptyCells {
     #[default]
     Show,
@@ -41,6 +57,10 @@ pub enum EmptyCells {
 
 /// One minimum or maximum component in a Grid track sizing function.
 #[derive(Debug, Clone, Copy)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum GridTrackBreadth {
     Auto,
     MinContent,
@@ -58,6 +78,10 @@ impl GridTrackBreadth {
 
 /// A Grid track size, preserving `minmax()` instead of prematurely resolving it.
 #[derive(Debug, Clone, Copy)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum GridTrackSize {
     Breadth(GridTrackBreadth),
     MinMax {
@@ -73,6 +97,10 @@ impl GridTrackSize {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum GridRepetition {
     Count(u32),
     AutoFill,
@@ -81,6 +109,10 @@ pub enum GridRepetition {
 
 /// One component of an explicit Grid track list.
 #[derive(Debug, Clone)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum GridTrackComponent {
     LineNames(Vec<String>),
     Track(GridTrackSize),
@@ -91,6 +123,10 @@ pub enum GridTrackComponent {
 }
 
 #[derive(Debug, Clone, Default)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum GridTrackList {
     #[default]
     None,
@@ -99,6 +135,10 @@ pub enum GridTrackList {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum GridLine {
     Auto,
     Line { index: i32, name: Option<String> },
@@ -112,12 +152,20 @@ impl Default for GridLine {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct GridPlacement {
     pub start: GridLine,
     pub end: GridLine,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum GridAutoFlowDirection {
     #[default]
     Row,
@@ -125,6 +173,10 @@ pub enum GridAutoFlowDirection {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct GridAutoFlow {
     pub direction: GridAutoFlowDirection,
     pub dense: bool,
@@ -132,12 +184,20 @@ pub struct GridAutoFlow {
 
 /// Rectangular `grid-template-areas` token matrix. A `None` cell is `.`.
 #[derive(Debug, Clone, Default)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct GridTemplateAreas {
     pub rows: Vec<Vec<Option<String>>>,
 }
 
 /// Bit set used by `margin-trim`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct MarginTrim(pub u8);
 
 impl MarginTrim {
@@ -171,6 +231,10 @@ impl BitOrAssign for MarginTrim {
 
 /// Independent CSS containment axes.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct Containment(pub u8);
 
 impl Containment {
@@ -207,6 +271,10 @@ impl BitOrAssign for Containment {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum ContentVisibility {
     #[default]
     Visible,
@@ -215,6 +283,10 @@ pub enum ContentVisibility {
 }
 
 #[derive(Debug, Clone, Copy)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct ContainIntrinsicLength {
     /// `auto <length>` remembers a previously rendered size when available.
     pub auto: bool,
@@ -250,6 +322,10 @@ impl Default for ContainIntrinsicLength {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum ContainerType {
     #[default]
     Normal,
@@ -259,6 +335,10 @@ pub enum ContainerType {
 
 /// Placement of the generated `::scroll-marker-group` box.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum ScrollMarkerGroup {
     #[default]
     None,
@@ -268,6 +348,10 @@ pub enum ScrollMarkerGroup {
 
 /// Whether anchors in this element establish a passive scroll-target group.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum ScrollTargetGroup {
     #[default]
     None,
@@ -276,6 +360,10 @@ pub enum ScrollTargetGroup {
 
 /// Alignment point contributed by a scroll-snap area on both axes.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum ScrollSnapAlign {
     #[default]
     None,
@@ -287,6 +375,10 @@ pub enum ScrollSnapAlign {
 /// Snap selection outside a directional gesture. The compatibility axis API
 /// establishes mandatory snapping unless proximity is explicitly selected.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum ScrollSnapStrictness {
     #[default]
     Mandatory,
@@ -295,6 +387,10 @@ pub enum ScrollSnapStrictness {
 
 /// Whether a directional scroll may pass this snap area.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum ScrollSnapStop {
     #[default]
     Normal,
@@ -303,6 +399,10 @@ pub enum ScrollSnapStop {
 
 /// Axis on which a scroll container establishes snap positions.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum ScrollSnapAxis {
     #[default]
     None,
@@ -343,6 +443,10 @@ pub enum ContainerCondition {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum ObjectFit {
     #[default]
     Fill,
@@ -353,6 +457,10 @@ pub enum ObjectFit {
 }
 
 #[derive(Debug, Clone, Copy)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct ObjectPosition {
     pub x: BackgroundPosition,
     pub y: BackgroundPosition,
@@ -369,6 +477,10 @@ impl Default for ObjectPosition {
 
 /// General affine CSS 2D transform in Skia/CSS matrix order.
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct Transform2D {
     pub a: f32,
     pub b: f32,
@@ -396,6 +508,10 @@ impl Default for Transform2D {
 }
 
 #[derive(Debug, Clone)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum ShapeOutside {
     None,
     MarginBox,

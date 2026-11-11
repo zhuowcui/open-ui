@@ -10,6 +10,10 @@
 /// Default is 400 (normal). Bold is 700.
 /// Blink: `FontSelectionValue` for weight, stored as float.
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct FontWeight(pub f32);
 
 impl FontWeight {
@@ -33,6 +37,10 @@ impl Default for FontWeight {
 /// Range: 50% (ultra-condensed) to 200% (ultra-expanded).
 /// Blink: `FontSelectionValue` for width.
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct FontStretch(pub f32);
 
 impl FontStretch {
@@ -56,6 +64,10 @@ impl Default for FontStretch {
 /// CSS `font-style` — normal, italic, or oblique with optional angle.
 /// Blink: `FontSelectionValue` for slope + `FontStyle` enum.
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum FontStyleEnum {
     Normal,
     Italic,
@@ -73,6 +85,10 @@ impl Default for FontStyleEnum {
 /// Blink: `FontDescription::VariantCaps` enum.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum FontVariantCaps {
     /// `normal` — no variant caps.
     Normal = 0,
@@ -107,6 +123,10 @@ impl Default for FontVariantCaps {
 /// Blink: individual bits inside `FontDescription::font_variant_ligatures_`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum LigatureState {
     /// Use font default — no feature tag emitted.
     Normal = 0,
@@ -131,6 +151,10 @@ impl Default for LigatureState {
 /// Blink: `FontDescription` stores four separate 2-bit fields
 /// (`common_ligatures_state_`, `discretionary_ligatures_state_`, etc.).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct FontVariantLigatures {
     /// `common-ligatures` / `no-common-ligatures` → `"liga"`, `"clig"`.
     pub common: LigatureState,
@@ -175,6 +199,10 @@ impl Default for FontVariantLigatures {
 /// Blink: `FontDescription::numeric_figure_` (2-bit field).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum NumericFigure {
     /// `normal` — use font default.
     Normal = 0,
@@ -195,6 +223,10 @@ impl Default for NumericFigure {
 /// Blink: `FontDescription::numeric_spacing_` (2-bit field).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum NumericSpacing {
     /// `normal` — use font default.
     Normal = 0,
@@ -215,6 +247,10 @@ impl Default for NumericSpacing {
 /// Blink: `FontDescription::numeric_fraction_` (2-bit field).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum NumericFraction {
     /// `normal` — use font default.
     Normal = 0,
@@ -234,6 +270,10 @@ impl Default for NumericFraction {
 ///
 /// Blink: individual 1-2 bit fields in `FontDescription`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct FontVariantNumeric {
     /// `lining-nums` / `oldstyle-nums`.
     pub figure: NumericFigure,
@@ -271,6 +311,10 @@ impl Default for FontVariantNumeric {
 /// Blink: `FontDescription::east_asian_form_` (3-bit field).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum EastAsianForm {
     /// `normal` — use font default.
     Normal = 0,
@@ -299,6 +343,10 @@ impl Default for EastAsianForm {
 /// Blink: `FontDescription::east_asian_width_` (2-bit field).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum EastAsianWidth {
     /// `normal` — use font default.
     Normal = 0,
@@ -318,6 +366,10 @@ impl Default for EastAsianWidth {
 ///
 /// Blink: individual bit fields in `FontDescription`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct FontVariantEastAsian {
     /// `jis78` / `jis83` / `jis90` / `jis04` / `simplified` / `traditional`.
     pub form: EastAsianForm,
@@ -349,6 +401,10 @@ impl Default for FontVariantEastAsian {
 /// Blink: `FontDescription::VariantPosition` enum.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum FontVariantPosition {
     /// `normal` — no positional variant.
     Normal = 0,
@@ -375,6 +431,10 @@ impl Default for FontVariantPosition {
 /// Blink: `FontDescription::font_variant_alternates_` (bit field).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum FontVariantAlternates {
     /// `normal` — no alternates.
     Normal = 0,
@@ -392,6 +452,10 @@ impl Default for FontVariantAlternates {
 /// Blink: `FontDescription::FontSmoothing`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum FontSmoothing {
     Auto = 0,
     None = 1,
@@ -409,6 +473,10 @@ impl Default for FontSmoothing {
 /// Blink: `TextRenderingMode`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum TextRendering {
     Auto = 0,
     OptimizeSpeed = 1,
@@ -425,6 +493,10 @@ impl Default for TextRendering {
 /// An OpenType feature setting (e.g., `font-feature-settings: "liga" 1`).
 /// Blink: `FontFeature` in `font_description.h`.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct FontFeature {
     /// Four-byte OpenType tag (e.g., `b"liga"`, `b"kern"`).
     pub tag: [u8; 4],
@@ -435,6 +507,10 @@ pub struct FontFeature {
 /// A font variation axis setting (e.g., `font-variation-settings: "wght" 600`).
 /// Blink: `FontVariationAxis` in `font_description.h`.
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct FontVariation {
     /// Four-byte OpenType variation axis tag (e.g., `b"wght"`, `b"wdth"`).
     pub tag: [u8; 4],
@@ -446,6 +522,10 @@ pub struct FontVariation {
 /// Blink: `FontDescription::FontSynthesisWeight` / `FontSynthesisStyle`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum FontSynthesis {
     Auto = 0,
     None = 1,
@@ -461,6 +541,10 @@ impl Default for FontSynthesis {
 /// Blink: `OpticalSizing` in `font_description.h`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum FontOpticalSizing {
     Auto = 0,
     None = 1,
@@ -475,6 +559,10 @@ impl Default for FontOpticalSizing {
 /// A single font family — either a named family or a generic keyword.
 /// Blink: `FontFamily` in `font_family.h`.
 #[derive(Clone, Debug, PartialEq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum FontFamily {
     /// A specific named font family (e.g., "Arial", "Helvetica Neue").
     Named(String),
@@ -486,6 +574,10 @@ pub enum FontFamily {
 /// Blink: `FontDescription::GenericFamilyType` + CSS Fonts Level 4 additions.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum GenericFontFamily {
     None = 0,
     Serif = 1,
@@ -512,6 +604,10 @@ impl Default for GenericFontFamily {
 /// An ordered list of font families for CSS `font-family`.
 /// Blink: `FontFamily` linked list in `font_family.h`.
 #[derive(Clone, Debug, PartialEq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct FontFamilyList {
     pub families: Vec<FontFamily>,
 }

@@ -10,6 +10,10 @@
 /// This matches Blink's `Color` class in its default sRGB mode.
 /// Skia's `SkColor4f` uses the same {r, g, b, a} f32 layout.
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct Color {
     pub r: f32,
     pub g: f32,
@@ -285,6 +289,10 @@ impl Default for Color {
 /// `currentColor` means "inherit the computed value of `color`".
 /// Border colors default to `currentColor`.
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum StyleColor {
     /// A resolved color value.
     Resolved(Color),

@@ -68,7 +68,7 @@ jobs:
         working-directory: bindings/rust
         run: |
           for crate in \
-            openui-geometry openui-style openui-dom openui-text openui-layout \
+            openui-geometry openui-style-derive openui-style openui-dom openui-text openui-layout \
             openui-paint openui-compositor openui-engine openui-platform \
             openui-macros openui; do
             cargo package --locked --package "$crate" --list >/dev/null

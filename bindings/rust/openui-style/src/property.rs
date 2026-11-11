@@ -105,6 +105,10 @@ include!("generated_properties.rs");
 
 /// A length before viewport and font-relative units are resolved for layout.
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum LengthValue {
     Computed(Length),
     Em(f32),
@@ -225,6 +229,10 @@ impl From<Length> for LengthValue {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct Edges<T> {
     pub top: T,
     pub right: T,
@@ -244,12 +252,20 @@ impl<T: Copy> Edges<T> {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct Gap {
     pub row: LengthValue,
     pub column: LengthValue,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct Border {
     pub width: f32,
     pub style: BorderStyle,
@@ -265,10 +281,18 @@ impl Border {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct CornerRadii(pub Edges<LengthValue>);
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum Cursor {
     Auto,
     Default,
@@ -280,12 +304,20 @@ pub enum Cursor {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum PointerEvents {
     Auto,
     None,
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum TransformOperation {
     Translate(LengthValue, LengthValue),
     Translate3d(LengthValue, LengthValue, LengthValue),
@@ -304,6 +336,7 @@ pub enum TransformOperation {
     /// Owned matrix suffix evaluated against the actual transform reference
     /// box after layout. Native callers normally use the existing operations.
     #[doc(hidden)]
+    #[cfg_attr(feature = "constructor-tokens", constructor_tokens(unsupported))]
     Interpolated {
         from: Box<TransformList>,
         to: Box<TransformList>,
@@ -313,25 +346,36 @@ pub enum TransformOperation {
     /// Context-free native keyframe sampling retains unresolved font/viewport
     /// units; Engine unit mapping materializes the same shared kernel later.
     #[doc(hidden)]
+    #[cfg_attr(feature = "constructor-tokens", constructor_tokens(unsupported))]
     PendingInterpolation {
         from: Box<TransformList>,
         to: Box<TransformList>,
         progress: f64,
     },
     #[doc(hidden)]
+    #[cfg_attr(feature = "constructor-tokens", constructor_tokens(unsupported))]
     PendingAccumulation {
         underlying: Box<TransformList>,
         effect: Box<TransformList>,
     },
     #[doc(hidden)]
+    #[cfg_attr(feature = "constructor-tokens", constructor_tokens(unsupported))]
     Resolved(Box<crate::ResolvedTransformOperation>),
 }
 
 #[derive(Debug, Clone, Default, PartialEq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct TransformList(pub Vec<TransformOperation>);
 
 /// A column-major CSS 4x4 transform matrix.
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub struct Transform3D(pub [f32; 16]);
 
 impl Transform3D {
@@ -358,6 +402,10 @@ impl Default for Transform3D {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(
+    feature = "constructor-tokens",
+    derive(crate::constructor_tokens::ConstructorTokens)
+)]
 pub enum StyleValue {
     Display(Display),
     Position(Position),
@@ -368,6 +416,7 @@ pub enum StyleValue {
     /// Owned working color returned by context-free animation sampling.
     /// Engine resolves dependent keywords only after the final own color.
     #[doc(hidden)]
+    #[cfg_attr(feature = "constructor-tokens", constructor_tokens(unsupported))]
     ColorExpression(crate::AnimationColorExpression),
     Number(f32),
     Integer(i32),

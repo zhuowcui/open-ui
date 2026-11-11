@@ -12,3 +12,11 @@ description = "Canonical typed style values and generated property metadata for 
 
 [dependencies]
 openui-geometry = { version = "=0.2.0", path = "../openui-geometry" }
+openui-style-derive = { version = "=0.2.0", path = "../openui-style-derive", optional = true }
+proc-macro2 = { version = "1", optional = true }
+quote = { version = "1", optional = true }
+
+[features]
+# Internal to openui-macros: turns values parsed at compile time into
+# constructor expressions (RFC 0001). Not part of the public API.
+constructor-tokens = ["dep:openui-style-derive", "dep:proc-macro2", "dep:quote"]
