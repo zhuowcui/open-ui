@@ -56,13 +56,30 @@ What Chromium showed:
 | Touched crates | `cargo test -p openui-engine -p openui-style -p openui` (Windows) | 903 passed, 0 failed, 11 ignored |
 | Generators | `generate_properties.py --check`; `generate_v02_contract.py --check`; `generate_renderer_contract.py --check`; `check_platform_scoped_tests.py` | no drift |
 | `cargo fmt --all --check` | in `bindings/rust` | pass |
+| Paired expanded census (WSL) | `wsl-branch-census-a8.sh`, base `9d7bccf6` | 22,517 of 23,728 exact before and after; 0 changed |
+| CSS Grid coverage (WSL) | coverage matrix, base `04d1eeab` | 2,218 of 4,204 exact before and after; 0 changed |
 
 The replay does what the public `Document` does around the engine: a press
 on a focusable target focuses it with `FocusOrigin::Pointer`, and Tab moves
 focus with `Engine::advance_focus`. Each key also calls
 `note_keyboard_event`.
 
-CENSUS
+The paired expanded census in WSL has no change. The base is `9d7bccf6`,
+the recorded census base; the head is `95480009`, this change. Both are
+built with the CI `SKIA_GN_ARGS` and share one Chromium cache. Chromium
+and Open UI are each identical in all 23,728 comparisons: 22,517 exact
+before and after, with nothing gained or lost. No style rule reads the
+matcher yet, and the census sends no input events, so this checks that
+rendering is unchanged. The delta is in the [census
+evidence](evidence/state-pseudo-classes-census-v1.json).
+
+The CSS Grid coverage suite has no change either
+([coverage evidence](evidence/state-pseudo-classes-coverage-v1.json)). The
+base is `04d1eeab`, the recorded coverage baseline; the head is `95480009`.
+In all 4,204 measured comparisons the status and the Open UI image are
+unchanged: 2,218 exact before and after. The two references that the
+baseline lists as unmeasured, whose renderer memory is unbounded, are left
+out of both runs.
 
 ## Not done here
 
