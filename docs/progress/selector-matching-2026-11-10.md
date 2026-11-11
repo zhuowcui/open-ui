@@ -39,13 +39,29 @@ class attribute with tabs and repeated spaces.
 | Touched crates | `cargo test -p openui-engine -p openui-style -p openui-macros -p openui` (Windows) | 945 passed, 0 failed, 15 ignored |
 | Generators | `generate_properties.py --check`; `generate_v02_contract.py --check` (the dependency policy hash follows the lockfile: `openui-engine` gains `serde_json` and `openui-style` with `constructor-tokens` as dev-dependencies); `generate_renderer_contract.py --check`; `check_platform_scoped_tests.py` | no drift |
 | `cargo fmt --all --check` | in `bindings/rust` | pass |
+| Paired expanded census (WSL) | `wsl-branch-census-a8.sh`, base `9d7bccf6` | 22,517 of 23,728 exact before and after; 0 changed |
+| CSS Grid coverage (WSL) | coverage matrix, base `04d1eeab` | 2,218 of 4,204 exact before and after; 0 changed |
 
 The renderer contract counts a style-field name used in `openui-engine/src`
 as a style consumer. An iterator's `.position()` call read as the
 `position` property, so the sibling helpers use `take_while` and
 `skip_while` instead.
 
-CENSUS
+The paired expanded census in WSL has no change. The base is `9d7bccf6`,
+the recorded census base; the head is `9a44103d`, this change. Both are
+built with the CI `SKIA_GN_ARGS` and share one Chromium cache. Chromium
+and Open UI are each identical in all 23,728 comparisons: 22,517 exact
+before and after, with nothing gained or lost. Nothing renders from
+selectors yet, so this checks that rendering is unchanged. The delta is in
+the [census evidence](evidence/selector-matching-census-v1.json).
+
+The CSS Grid coverage suite has no change either
+([coverage evidence](evidence/selector-matching-coverage-v1.json)). The
+base is `04d1eeab`, the recorded coverage baseline; the head is `9a44103d`.
+In all 4,204 measured comparisons the status and the Open UI image are
+unchanged: 2,218 exact before and after. The two references that the
+baseline lists as unmeasured, whose renderer memory is unbounded, are left
+out of both runs.
 
 ## Not done here
 
