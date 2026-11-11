@@ -265,9 +265,11 @@ These are API requests for the framework track, not blockers.
 
 1. Remeasure once engine A2 (colors) and the WOFF2 fix merge, and replace
    the stand-ins with real `oklch()` and `color-mix()` values.
-2. The Radix-like primitives design (C2) in
-   `docs/alpha/rfcs/0003-component-primitives.md`, while waiting for typed
-   style rules for the interactive components.
+2. Build the Radix-like primitives (C2) as proposed in
+   [RFC 0003](../../alpha/rfcs/0003-component-primitives.md), once the
+   framework and engine tracks have reviewed its requests, then tabs,
+   dialog, checkbox and switch on them. Their `data-state` styles need
+   typed style rules (A1).
 3. Lucide icons in Open UI: the static SVG decoder
    (`bindings/rust/openui-paint/src/image_resource.rs`) draws only `<rect>`
    shapes, while every Lucide icon is stroked `<path>` data in
