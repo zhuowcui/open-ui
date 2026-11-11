@@ -65,5 +65,6 @@ on branch `components/c4-assets` and the shared findings note.
   `parse_literal`; `cargo test -p openui --test typed_style_constructors`
   passes 3 of 3 on Windows. Census and CSS Grid coverage are unchanged.
   [Record](../typed-style-constructors-2026-11-09.md).
+- 10 November 2026, PR #109 merged (`acd090c8`).
 - 10 November 2026: `style!` compiles a CSS declaration block to typed
   styles at compile time, the second A1 step. [Record](../style-macro-2026-11-10.md).
