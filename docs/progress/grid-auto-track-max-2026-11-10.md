@@ -67,6 +67,8 @@ min-content and the max-content contribution.
 | Layout crate | `cargo test -p openui-layout --no-fail-fast` (Windows) | 5,958 passed, 0 failed, 5 ignored |
 | Generators | `generate_properties.py --check`; `generate_v02_contract.py --check`; `generate_renderer_contract.py --check` | no drift |
 | `cargo fmt --all --check` | in `bindings/rust` | pass |
+| Paired expanded census (WSL) | `wsl-branch-census-a8.sh`, base `9d7bccf6`, head `1ac22538` | 22,517 of 23,728 exact before and after; 0 changed ([delta](evidence/grid-auto-track-max-census-v1.json)) |
+| CSS Grid coverage (WSL) | coverage matrix, base `04d1eeab`, head `1ac22538` | 2,218 to 2,227 of 4,204 exact: 9 gained, 0 lost ([delta](evidence/grid-auto-track-max-coverage-v1.json)) |
 
 The text tests live in `openui-layout/tests/`, not in `grid.rs`: the
 renderer contract counts a style field named in a source file as consumed
@@ -93,7 +95,28 @@ lost CSS Grid coverage, so neither was merged:
 This head gives an orthogonal item the contribution it gave the base sizes
 instead.
 
-CENSUS
+## Census and coverage
+
+At head `1ac22538`, the paired expanded census in WSL has no change:
+22,517 of 23,728 images are exact before and after, and no Open UI image
+changed. The base is `9d7bccf6`.
+
+The CSS Grid coverage run, against base `04d1eeab`, gains 9 exact images
+and loses none (2,218 to 2,227 of 4,204):
+
+- `subgrid/auto-track-sizing-001` and its reference, in all 4 profiles;
+- `subgrid/orthogonal-writing-mode-004-ref` at 1280x720.
+
+Of the 57 other images that changed and stayed different, 48 have fewer
+mismatched pixels, 1 has the same count, and 8 have more:
+
+- `subgrid/line-names-005-ref` in all 4 profiles (220 to 595 more pixels);
+- `subgrid/writing-directions-002` at 1280x720 (968) and 1920x1080 (6);
+- `subgrid/orthogonal-writing-mode-003` and its reference at 1920x1080
+  (16 each).
+
+All 8 were different before this change as well; their causes are not
+diagnosed here.
 
 ## Not done here
 
