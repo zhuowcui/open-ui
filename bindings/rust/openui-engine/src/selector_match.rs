@@ -7,9 +7,11 @@
 //! authored elements take part: text, generated pseudo-elements and the
 //! viewport do not.
 //!
-//! Pseudo-classes that depend on interaction or form state are not matched
-//! yet; they return [`SelectorMatchError::UnsupportedPseudoClass`] rather
-//! than a silent non-match.
+//! `:hover`, `:active`, `:focus`, `:focus-visible` and `:focus-within` read
+//! the engine's interaction state. Pseudo-classes that depend on form or
+//! dialog state are not matched yet; they return
+//! [`SelectorMatchError::UnsupportedPseudoClass`] rather than a silent
+//! non-match.
 
 use openui_dom::ElementTag;
 use openui_style::selector::{
@@ -223,11 +225,16 @@ impl Engine {
                 Some(parent) => self.element_tag(parent)? == ElementTag::Viewport,
                 None => false,
             },
-            PseudoClass::Hover => return unsupported("hover"),
-            PseudoClass::Active => return unsupported("active"),
-            PseudoClass::Focus => return unsupported("focus"),
-            PseudoClass::FocusVisible => return unsupported("focus-visible"),
-            PseudoClass::FocusWithin => return unsupported("focus-within"),
+            PseudoClass::Hover => self.is_hovered(element)?,
+            PseudoClass::Active => self.is_active(element)?,
+            PseudoClass::Focus => self.focused() == Some(element),
+            PseudoClass::FocusVisible => self.focused() == Some(element) && self.focus_visible(),
+            // Blink sets the focus-within flag on the focused element and its
+            // flat-tree ancestors.
+            PseudoClass::FocusWithin => match self.focused() {
+                Some(focused) => self.path_to_root(focused)?.contains(&element),
+                None => false,
+            },
             PseudoClass::Disabled => return unsupported("disabled"),
             PseudoClass::Enabled => return unsupported("enabled"),
             PseudoClass::Checked => return unsupported("checked"),

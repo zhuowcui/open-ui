@@ -520,7 +520,19 @@ impl Engine {
                 }
             }
             self.focused = Some(handle);
-            self.focus_visible = !matches!(origin, FocusOrigin::Pointer);
+            match origin {
+                FocusOrigin::Pointer => {
+                    self.last_focus_from_pointer = true;
+                    self.had_keyboard_event = false;
+                }
+                FocusOrigin::Keyboard | FocusOrigin::Accessibility => {
+                    self.last_focus_from_pointer = false;
+                }
+                // As Blink's script focus, native focus keeps the last
+                // focus type, so it is visible after keyboard focus and
+                // hidden after pointer focus.
+                FocusOrigin::Script => {}
+            }
             if let Ok(node) = self.resolve(handle) {
                 self.document.set_attribute(node, "data-oui-focused", "");
             }
@@ -530,8 +542,42 @@ impl Engine {
         Ok(previous)
     }
 
+    /// Whether the focused element matches `:focus-visible`, as Blink's
+    /// `SelectorChecker::MatchesFocusVisiblePseudoClass`: it does when the
+    /// element takes text input, when the last focus change was not from a
+    /// pointer, or when a key went down after it.
     pub fn focus_visible(&self) -> bool {
-        self.focused.is_some() && self.focus_visible
+        self.focused.is_some_and(|focused| {
+            self.may_trigger_virtual_keyboard(focused)
+                || !self.last_focus_from_pointer
+                || self.had_keyboard_event
+        })
+    }
+
+    /// Record a key press for `:focus-visible`, as Blink's
+    /// `Document::SetHadKeyboardEvent` on key down. Pointer focus on another
+    /// element clears it.
+    pub fn note_keyboard_event(&mut self) {
+        self.had_keyboard_event = true;
+    }
+
+    /// Blink's `MayTriggerVirtualKeyboard`: a textarea, or an input whose
+    /// type is a text field (text, search, email, password, tel, url,
+    /// number, or an unknown type). Read-only fields count.
+    fn may_trigger_virtual_keyboard(&self, handle: NodeHandle) -> bool {
+        match self.controls.get(&handle.index).map(|control| control.role) {
+            Some(FormControlRole::TextArea) => true,
+            Some(FormControlRole::TextInput) => !self
+                .attribute(handle, "type")
+                .ok()
+                .flatten()
+                .is_some_and(|kind| {
+                    ["hidden", "image", "time", "month", "week", "datetime-local"]
+                        .iter()
+                        .any(|other| kind.eq_ignore_ascii_case(other))
+                }),
+            _ => false,
+        }
     }
 
     pub fn advance_focus(&mut self, direction: i32) -> Result<Option<NodeHandle>, EngineError> {
@@ -1458,7 +1504,7 @@ impl Engine {
         }
     }
 
-    fn path_to_root(&self, target: NodeHandle) -> Result<Vec<NodeHandle>, EngineError> {
+    pub(crate) fn path_to_root(&self, target: NodeHandle) -> Result<Vec<NodeHandle>, EngineError> {
         let target = self.public_event_target(target);
         let mut result = vec![target];
         let mut current = target;

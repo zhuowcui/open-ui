@@ -1,0 +1,1550 @@
+{
+ "chromium": "147.0.7727.50",
+ "platform": "windows",
+ "viewport": [
+  200,
+  300,
+  1.0
+ ],
+ "boxes": [
+  [
+   "outer",
+   "div",
+   "body",
+   0,
+   0,
+   200,
+   100,
+   {}
+  ],
+  [
+   "middle",
+   "div",
+   "outer",
+   10,
+   10,
+   100,
+   80,
+   {}
+  ],
+  [
+   "inner",
+   "div",
+   "middle",
+   10,
+   10,
+   40,
+   40,
+   {}
+  ],
+  [
+   "sibling",
+   "div",
+   "outer",
+   130,
+   10,
+   40,
+   40,
+   {}
+  ],
+  [
+   "controls",
+   "div",
+   "body",
+   0,
+   100,
+   200,
+   100,
+   {}
+  ],
+  [
+   "button",
+   "button",
+   "controls",
+   10,
+   10,
+   60,
+   30,
+   {}
+  ],
+  [
+   "text",
+   "input",
+   "controls",
+   100,
+   10,
+   80,
+   30,
+   {
+    "type": "text"
+   }
+  ],
+  [
+   "group",
+   "div",
+   "controls",
+   10,
+   50,
+   180,
+   40,
+   {}
+  ],
+  [
+   "button2",
+   "button",
+   "group",
+   10,
+   5,
+   60,
+   30,
+   {}
+  ],
+  [
+   "tabbable",
+   "div",
+   "group",
+   100,
+   5,
+   60,
+   30,
+   {
+    "tabindex": "0"
+   }
+  ],
+  [
+   "fields",
+   "div",
+   "body",
+   0,
+   200,
+   200,
+   100,
+   {}
+  ],
+  [
+   "checkbox",
+   "input",
+   "fields",
+   10,
+   10,
+   20,
+   20,
+   {
+    "type": "checkbox"
+   }
+  ],
+  [
+   "readonly",
+   "input",
+   "fields",
+   40,
+   10,
+   60,
+   30,
+   {
+    "type": "text",
+    "readonly": ""
+   }
+  ],
+  [
+   "textarea",
+   "textarea",
+   "fields",
+   110,
+   10,
+   80,
+   40,
+   {}
+  ]
+ ],
+ "selectors": [
+  ":hover",
+  ":active",
+  ":focus",
+  ":focus-visible",
+  ":focus-within",
+  "div:hover > div",
+  "#outer:hover #inner",
+  "div:not(:hover)",
+  "div:has(> :hover)",
+  ":hover:active",
+  ":is(:hover, :focus)",
+  ":focus-within > :focus",
+  "button:focus:not(:focus-visible)",
+  ":where(:focus-visible)",
+  "div:has(:focus-visible)"
+ ],
+ "steps": [
+  {
+   "step": "initial",
+   "actions": [],
+   "matches": {
+    ":hover": [],
+    ":active": [],
+    ":focus": [],
+    ":focus-visible": [],
+    ":focus-within": [],
+    "div:hover > div": [],
+    "#outer:hover #inner": [],
+    "div:not(:hover)": [
+     "outer",
+     "middle",
+     "inner",
+     "sibling",
+     "controls",
+     "group",
+     "tabbable",
+     "fields"
+    ],
+    "div:has(> :hover)": [],
+    ":hover:active": [],
+    ":is(:hover, :focus)": [],
+    ":focus-within > :focus": [],
+    "button:focus:not(:focus-visible)": [],
+    ":where(:focus-visible)": [],
+    "div:has(:focus-visible)": []
+   }
+  },
+  {
+   "step": "hover inner",
+   "actions": [
+    [
+     "move",
+     30,
+     30
+    ]
+   ],
+   "matches": {
+    ":hover": [
+     "html",
+     "body",
+     "outer",
+     "middle",
+     "inner"
+    ],
+    ":active": [],
+    ":focus": [],
+    ":focus-visible": [],
+    ":focus-within": [],
+    "div:hover > div": [
+     "middle",
+     "inner",
+     "sibling"
+    ],
+    "#outer:hover #inner": [
+     "inner"
+    ],
+    "div:not(:hover)": [
+     "sibling",
+     "controls",
+     "group",
+     "tabbable",
+     "fields"
+    ],
+    "div:has(> :hover)": [
+     "outer",
+     "middle"
+    ],
+    ":hover:active": [],
+    ":is(:hover, :focus)": [
+     "html",
+     "body",
+     "outer",
+     "middle",
+     "inner"
+    ],
+    ":focus-within > :focus": [],
+    "button:focus:not(:focus-visible)": [],
+    ":where(:focus-visible)": [],
+    "div:has(:focus-visible)": []
+   }
+  },
+  {
+   "step": "press inner",
+   "actions": [
+    [
+     "press",
+     30,
+     30
+    ]
+   ],
+   "matches": {
+    ":hover": [
+     "html",
+     "body",
+     "outer",
+     "middle",
+     "inner"
+    ],
+    ":active": [
+     "html",
+     "body",
+     "outer",
+     "middle",
+     "inner"
+    ],
+    ":focus": [],
+    ":focus-visible": [],
+    ":focus-within": [],
+    "div:hover > div": [
+     "middle",
+     "inner",
+     "sibling"
+    ],
+    "#outer:hover #inner": [
+     "inner"
+    ],
+    "div:not(:hover)": [
+     "sibling",
+     "controls",
+     "group",
+     "tabbable",
+     "fields"
+    ],
+    "div:has(> :hover)": [
+     "outer",
+     "middle"
+    ],
+    ":hover:active": [
+     "html",
+     "body",
+     "outer",
+     "middle",
+     "inner"
+    ],
+    ":is(:hover, :focus)": [
+     "html",
+     "body",
+     "outer",
+     "middle",
+     "inner"
+    ],
+    ":focus-within > :focus": [],
+    "button:focus:not(:focus-visible)": [],
+    ":where(:focus-visible)": [],
+    "div:has(:focus-visible)": []
+   }
+  },
+  {
+   "step": "move to sibling while pressed",
+   "actions": [
+    [
+     "move",
+     150,
+     30
+    ]
+   ],
+   "matches": {
+    ":hover": [
+     "html",
+     "body",
+     "outer",
+     "sibling"
+    ],
+    ":active": [
+     "html",
+     "body",
+     "outer",
+     "middle",
+     "inner"
+    ],
+    ":focus": [],
+    ":focus-visible": [],
+    ":focus-within": [],
+    "div:hover > div": [
+     "middle",
+     "sibling"
+    ],
+    "#outer:hover #inner": [
+     "inner"
+    ],
+    "div:not(:hover)": [
+     "middle",
+     "inner",
+     "controls",
+     "group",
+     "tabbable",
+     "fields"
+    ],
+    "div:has(> :hover)": [
+     "outer"
+    ],
+    ":hover:active": [
+     "html",
+     "body",
+     "outer"
+    ],
+    ":is(:hover, :focus)": [
+     "html",
+     "body",
+     "outer",
+     "sibling"
+    ],
+    ":focus-within > :focus": [],
+    "button:focus:not(:focus-visible)": [],
+    ":where(:focus-visible)": [],
+    "div:has(:focus-visible)": []
+   }
+  },
+  {
+   "step": "move back to inner while pressed",
+   "actions": [
+    [
+     "move",
+     30,
+     30
+    ]
+   ],
+   "matches": {
+    ":hover": [
+     "html",
+     "body",
+     "outer",
+     "middle",
+     "inner"
+    ],
+    ":active": [
+     "html",
+     "body",
+     "outer",
+     "middle",
+     "inner"
+    ],
+    ":focus": [],
+    ":focus-visible": [],
+    ":focus-within": [],
+    "div:hover > div": [
+     "middle",
+     "inner",
+     "sibling"
+    ],
+    "#outer:hover #inner": [
+     "inner"
+    ],
+    "div:not(:hover)": [
+     "sibling",
+     "controls",
+     "group",
+     "tabbable",
+     "fields"
+    ],
+    "div:has(> :hover)": [
+     "outer",
+     "middle"
+    ],
+    ":hover:active": [
+     "html",
+     "body",
+     "outer",
+     "middle",
+     "inner"
+    ],
+    ":is(:hover, :focus)": [
+     "html",
+     "body",
+     "outer",
+     "middle",
+     "inner"
+    ],
+    ":focus-within > :focus": [],
+    "button:focus:not(:focus-visible)": [],
+    ":where(:focus-visible)": [],
+    "div:has(:focus-visible)": []
+   }
+  },
+  {
+   "step": "move to sibling while pressed again",
+   "actions": [
+    [
+     "move",
+     150,
+     30
+    ]
+   ],
+   "matches": {
+    ":hover": [
+     "html",
+     "body",
+     "outer",
+     "sibling"
+    ],
+    ":active": [
+     "html",
+     "body",
+     "outer",
+     "middle",
+     "inner"
+    ],
+    ":focus": [],
+    ":focus-visible": [],
+    ":focus-within": [],
+    "div:hover > div": [
+     "middle",
+     "sibling"
+    ],
+    "#outer:hover #inner": [
+     "inner"
+    ],
+    "div:not(:hover)": [
+     "middle",
+     "inner",
+     "controls",
+     "group",
+     "tabbable",
+     "fields"
+    ],
+    "div:has(> :hover)": [
+     "outer"
+    ],
+    ":hover:active": [
+     "html",
+     "body",
+     "outer"
+    ],
+    ":is(:hover, :focus)": [
+     "html",
+     "body",
+     "outer",
+     "sibling"
+    ],
+    ":focus-within > :focus": [],
+    "button:focus:not(:focus-visible)": [],
+    ":where(:focus-visible)": [],
+    "div:has(:focus-visible)": []
+   }
+  },
+  {
+   "step": "release over sibling",
+   "actions": [
+    [
+     "release",
+     150,
+     30
+    ]
+   ],
+   "matches": {
+    ":hover": [
+     "html",
+     "body",
+     "outer",
+     "sibling"
+    ],
+    ":active": [],
+    ":focus": [],
+    ":focus-visible": [],
+    ":focus-within": [],
+    "div:hover > div": [
+     "middle",
+     "sibling"
+    ],
+    "#outer:hover #inner": [
+     "inner"
+    ],
+    "div:not(:hover)": [
+     "middle",
+     "inner",
+     "controls",
+     "group",
+     "tabbable",
+     "fields"
+    ],
+    "div:has(> :hover)": [
+     "outer"
+    ],
+    ":hover:active": [],
+    ":is(:hover, :focus)": [
+     "html",
+     "body",
+     "outer",
+     "sibling"
+    ],
+    ":focus-within > :focus": [],
+    "button:focus:not(:focus-visible)": [],
+    ":where(:focus-visible)": [],
+    "div:has(:focus-visible)": []
+   }
+  },
+  {
+   "step": "move within sibling",
+   "actions": [
+    [
+     "move",
+     151,
+     31
+    ]
+   ],
+   "matches": {
+    ":hover": [
+     "html",
+     "body",
+     "outer",
+     "sibling"
+    ],
+    ":active": [],
+    ":focus": [],
+    ":focus-visible": [],
+    ":focus-within": [],
+    "div:hover > div": [
+     "middle",
+     "sibling"
+    ],
+    "#outer:hover #inner": [
+     "inner"
+    ],
+    "div:not(:hover)": [
+     "middle",
+     "inner",
+     "controls",
+     "group",
+     "tabbable",
+     "fields"
+    ],
+    "div:has(> :hover)": [
+     "outer"
+    ],
+    ":hover:active": [],
+    ":is(:hover, :focus)": [
+     "html",
+     "body",
+     "outer",
+     "sibling"
+    ],
+    ":focus-within > :focus": [],
+    "button:focus:not(:focus-visible)": [],
+    ":where(:focus-visible)": [],
+    "div:has(:focus-visible)": []
+   }
+  },
+  {
+   "step": "move to controls",
+   "actions": [
+    [
+     "move",
+     195,
+     195
+    ]
+   ],
+   "matches": {
+    ":hover": [
+     "html",
+     "body",
+     "controls"
+    ],
+    ":active": [],
+    ":focus": [],
+    ":focus-visible": [],
+    ":focus-within": [],
+    "div:hover > div": [
+     "group"
+    ],
+    "#outer:hover #inner": [],
+    "div:not(:hover)": [
+     "outer",
+     "middle",
+     "inner",
+     "sibling",
+     "group",
+     "tabbable",
+     "fields"
+    ],
+    "div:has(> :hover)": [],
+    ":hover:active": [],
+    ":is(:hover, :focus)": [
+     "html",
+     "body",
+     "controls"
+    ],
+    ":focus-within > :focus": [],
+    "button:focus:not(:focus-visible)": [],
+    ":where(:focus-visible)": [],
+    "div:has(:focus-visible)": []
+   }
+  },
+  {
+   "step": "click button",
+   "actions": [
+    [
+     "move",
+     40,
+     125
+    ],
+    [
+     "press",
+     40,
+     125
+    ],
+    [
+     "release",
+     40,
+     125
+    ]
+   ],
+   "matches": {
+    ":hover": [
+     "html",
+     "body",
+     "controls",
+     "button"
+    ],
+    ":active": [],
+    ":focus": [
+     "button"
+    ],
+    ":focus-visible": [],
+    ":focus-within": [
+     "html",
+     "body",
+     "controls",
+     "button"
+    ],
+    "div:hover > div": [
+     "group"
+    ],
+    "#outer:hover #inner": [],
+    "div:not(:hover)": [
+     "outer",
+     "middle",
+     "inner",
+     "sibling",
+     "group",
+     "tabbable",
+     "fields"
+    ],
+    "div:has(> :hover)": [
+     "controls"
+    ],
+    ":hover:active": [],
+    ":is(:hover, :focus)": [
+     "html",
+     "body",
+     "controls",
+     "button"
+    ],
+    ":focus-within > :focus": [
+     "button"
+    ],
+    "button:focus:not(:focus-visible)": [
+     "button"
+    ],
+    ":where(:focus-visible)": [],
+    "div:has(:focus-visible)": []
+   }
+  },
+  {
+   "step": "click text input",
+   "actions": [
+    [
+     "move",
+     140,
+     125
+    ],
+    [
+     "press",
+     140,
+     125
+    ],
+    [
+     "release",
+     140,
+     125
+    ]
+   ],
+   "matches": {
+    ":hover": [
+     "html",
+     "body",
+     "controls",
+     "text"
+    ],
+    ":active": [],
+    ":focus": [
+     "text"
+    ],
+    ":focus-visible": [
+     "text"
+    ],
+    ":focus-within": [
+     "html",
+     "body",
+     "controls",
+     "text"
+    ],
+    "div:hover > div": [
+     "group"
+    ],
+    "#outer:hover #inner": [],
+    "div:not(:hover)": [
+     "outer",
+     "middle",
+     "inner",
+     "sibling",
+     "group",
+     "tabbable",
+     "fields"
+    ],
+    "div:has(> :hover)": [
+     "controls"
+    ],
+    ":hover:active": [],
+    ":is(:hover, :focus)": [
+     "html",
+     "body",
+     "controls",
+     "text"
+    ],
+    ":focus-within > :focus": [
+     "text"
+    ],
+    "button:focus:not(:focus-visible)": [],
+    ":where(:focus-visible)": [
+     "text"
+    ],
+    "div:has(:focus-visible)": [
+     "controls"
+    ]
+   }
+  },
+  {
+   "step": "tab",
+   "actions": [
+    [
+     "key",
+     "Tab",
+     false
+    ]
+   ],
+   "matches": {
+    ":hover": [
+     "html",
+     "body",
+     "controls",
+     "text"
+    ],
+    ":active": [],
+    ":focus": [
+     "button2"
+    ],
+    ":focus-visible": [
+     "button2"
+    ],
+    ":focus-within": [
+     "html",
+     "body",
+     "controls",
+     "group",
+     "button2"
+    ],
+    "div:hover > div": [
+     "group"
+    ],
+    "#outer:hover #inner": [],
+    "div:not(:hover)": [
+     "outer",
+     "middle",
+     "inner",
+     "sibling",
+     "group",
+     "tabbable",
+     "fields"
+    ],
+    "div:has(> :hover)": [
+     "controls"
+    ],
+    ":hover:active": [],
+    ":is(:hover, :focus)": [
+     "html",
+     "body",
+     "controls",
+     "text",
+     "button2"
+    ],
+    ":focus-within > :focus": [
+     "button2"
+    ],
+    "button:focus:not(:focus-visible)": [],
+    ":where(:focus-visible)": [
+     "button2"
+    ],
+    "div:has(:focus-visible)": [
+     "controls",
+     "group"
+    ]
+   }
+  },
+  {
+   "step": "click button after keyboard",
+   "actions": [
+    [
+     "move",
+     40,
+     125
+    ],
+    [
+     "press",
+     40,
+     125
+    ],
+    [
+     "release",
+     40,
+     125
+    ]
+   ],
+   "matches": {
+    ":hover": [
+     "html",
+     "body",
+     "controls",
+     "button"
+    ],
+    ":active": [],
+    ":focus": [
+     "button"
+    ],
+    ":focus-visible": [],
+    ":focus-within": [
+     "html",
+     "body",
+     "controls",
+     "button"
+    ],
+    "div:hover > div": [
+     "group"
+    ],
+    "#outer:hover #inner": [],
+    "div:not(:hover)": [
+     "outer",
+     "middle",
+     "inner",
+     "sibling",
+     "group",
+     "tabbable",
+     "fields"
+    ],
+    "div:has(> :hover)": [
+     "controls"
+    ],
+    ":hover:active": [],
+    ":is(:hover, :focus)": [
+     "html",
+     "body",
+     "controls",
+     "button"
+    ],
+    ":focus-within > :focus": [
+     "button"
+    ],
+    "button:focus:not(:focus-visible)": [
+     "button"
+    ],
+    ":where(:focus-visible)": [],
+    "div:has(:focus-visible)": []
+   }
+  },
+  {
+   "step": "script focus after pointer",
+   "actions": [
+    [
+     "focus",
+     "tabbable"
+    ]
+   ],
+   "matches": {
+    ":hover": [
+     "html",
+     "body",
+     "controls",
+     "button"
+    ],
+    ":active": [],
+    ":focus": [
+     "tabbable"
+    ],
+    ":focus-visible": [],
+    ":focus-within": [
+     "html",
+     "body",
+     "controls",
+     "group",
+     "tabbable"
+    ],
+    "div:hover > div": [
+     "group"
+    ],
+    "#outer:hover #inner": [],
+    "div:not(:hover)": [
+     "outer",
+     "middle",
+     "inner",
+     "sibling",
+     "group",
+     "tabbable",
+     "fields"
+    ],
+    "div:has(> :hover)": [
+     "controls"
+    ],
+    ":hover:active": [],
+    ":is(:hover, :focus)": [
+     "html",
+     "body",
+     "controls",
+     "button",
+     "tabbable"
+    ],
+    ":focus-within > :focus": [
+     "tabbable"
+    ],
+    "button:focus:not(:focus-visible)": [],
+    ":where(:focus-visible)": [],
+    "div:has(:focus-visible)": []
+   }
+  },
+  {
+   "step": "shift tab",
+   "actions": [
+    [
+     "key",
+     "Tab",
+     true
+    ]
+   ],
+   "matches": {
+    ":hover": [
+     "html",
+     "body",
+     "controls",
+     "button"
+    ],
+    ":active": [],
+    ":focus": [
+     "button2"
+    ],
+    ":focus-visible": [
+     "button2"
+    ],
+    ":focus-within": [
+     "html",
+     "body",
+     "controls",
+     "group",
+     "button2"
+    ],
+    "div:hover > div": [
+     "group"
+    ],
+    "#outer:hover #inner": [],
+    "div:not(:hover)": [
+     "outer",
+     "middle",
+     "inner",
+     "sibling",
+     "group",
+     "tabbable",
+     "fields"
+    ],
+    "div:has(> :hover)": [
+     "controls"
+    ],
+    ":hover:active": [],
+    ":is(:hover, :focus)": [
+     "html",
+     "body",
+     "controls",
+     "button",
+     "button2"
+    ],
+    ":focus-within > :focus": [
+     "button2"
+    ],
+    "button:focus:not(:focus-visible)": [],
+    ":where(:focus-visible)": [
+     "button2"
+    ],
+    "div:has(:focus-visible)": [
+     "controls",
+     "group"
+    ]
+   }
+  },
+  {
+   "step": "script focus after keyboard",
+   "actions": [
+    [
+     "focus",
+     "button"
+    ]
+   ],
+   "matches": {
+    ":hover": [
+     "html",
+     "body",
+     "controls",
+     "button"
+    ],
+    ":active": [],
+    ":focus": [
+     "button"
+    ],
+    ":focus-visible": [
+     "button"
+    ],
+    ":focus-within": [
+     "html",
+     "body",
+     "controls",
+     "button"
+    ],
+    "div:hover > div": [
+     "group"
+    ],
+    "#outer:hover #inner": [],
+    "div:not(:hover)": [
+     "outer",
+     "middle",
+     "inner",
+     "sibling",
+     "group",
+     "tabbable",
+     "fields"
+    ],
+    "div:has(> :hover)": [
+     "controls"
+    ],
+    ":hover:active": [],
+    ":is(:hover, :focus)": [
+     "html",
+     "body",
+     "controls",
+     "button"
+    ],
+    ":focus-within > :focus": [
+     "button"
+    ],
+    "button:focus:not(:focus-visible)": [],
+    ":where(:focus-visible)": [
+     "button"
+    ],
+    "div:has(:focus-visible)": [
+     "controls"
+    ]
+   }
+  },
+  {
+   "step": "press shift after pointer focus",
+   "actions": [
+    [
+     "move",
+     40,
+     125
+    ],
+    [
+     "press",
+     40,
+     125
+    ],
+    [
+     "release",
+     40,
+     125
+    ],
+    [
+     "key",
+     "Shift",
+     false
+    ]
+   ],
+   "matches": {
+    ":hover": [
+     "html",
+     "body",
+     "controls",
+     "button"
+    ],
+    ":active": [],
+    ":focus": [
+     "button"
+    ],
+    ":focus-visible": [
+     "button"
+    ],
+    ":focus-within": [
+     "html",
+     "body",
+     "controls",
+     "button"
+    ],
+    "div:hover > div": [
+     "group"
+    ],
+    "#outer:hover #inner": [],
+    "div:not(:hover)": [
+     "outer",
+     "middle",
+     "inner",
+     "sibling",
+     "group",
+     "tabbable",
+     "fields"
+    ],
+    "div:has(> :hover)": [
+     "controls"
+    ],
+    ":hover:active": [],
+    ":is(:hover, :focus)": [
+     "html",
+     "body",
+     "controls",
+     "button"
+    ],
+    ":focus-within > :focus": [
+     "button"
+    ],
+    "button:focus:not(:focus-visible)": [],
+    ":where(:focus-visible)": [
+     "button"
+    ],
+    "div:has(:focus-visible)": [
+     "controls"
+    ]
+   }
+  },
+  {
+   "step": "click focused button again",
+   "actions": [
+    [
+     "press",
+     40,
+     125
+    ],
+    [
+     "release",
+     40,
+     125
+    ]
+   ],
+   "matches": {
+    ":hover": [
+     "html",
+     "body",
+     "controls",
+     "button"
+    ],
+    ":active": [],
+    ":focus": [
+     "button"
+    ],
+    ":focus-visible": [
+     "button"
+    ],
+    ":focus-within": [
+     "html",
+     "body",
+     "controls",
+     "button"
+    ],
+    "div:hover > div": [
+     "group"
+    ],
+    "#outer:hover #inner": [],
+    "div:not(:hover)": [
+     "outer",
+     "middle",
+     "inner",
+     "sibling",
+     "group",
+     "tabbable",
+     "fields"
+    ],
+    "div:has(> :hover)": [
+     "controls"
+    ],
+    ":hover:active": [],
+    ":is(:hover, :focus)": [
+     "html",
+     "body",
+     "controls",
+     "button"
+    ],
+    ":focus-within > :focus": [
+     "button"
+    ],
+    "button:focus:not(:focus-visible)": [],
+    ":where(:focus-visible)": [
+     "button"
+    ],
+    "div:has(:focus-visible)": [
+     "controls"
+    ]
+   }
+  },
+  {
+   "step": "click checkbox",
+   "actions": [
+    [
+     "move",
+     20,
+     220
+    ],
+    [
+     "press",
+     20,
+     220
+    ],
+    [
+     "release",
+     20,
+     220
+    ]
+   ],
+   "matches": {
+    ":hover": [
+     "html",
+     "body",
+     "fields",
+     "checkbox"
+    ],
+    ":active": [],
+    ":focus": [
+     "checkbox"
+    ],
+    ":focus-visible": [],
+    ":focus-within": [
+     "html",
+     "body",
+     "fields",
+     "checkbox"
+    ],
+    "div:hover > div": [],
+    "#outer:hover #inner": [],
+    "div:not(:hover)": [
+     "outer",
+     "middle",
+     "inner",
+     "sibling",
+     "controls",
+     "group",
+     "tabbable"
+    ],
+    "div:has(> :hover)": [
+     "fields"
+    ],
+    ":hover:active": [],
+    ":is(:hover, :focus)": [
+     "html",
+     "body",
+     "fields",
+     "checkbox"
+    ],
+    ":focus-within > :focus": [
+     "checkbox"
+    ],
+    "button:focus:not(:focus-visible)": [],
+    ":where(:focus-visible)": [],
+    "div:has(:focus-visible)": []
+   }
+  },
+  {
+   "step": "click read-only text input",
+   "actions": [
+    [
+     "move",
+     70,
+     225
+    ],
+    [
+     "press",
+     70,
+     225
+    ],
+    [
+     "release",
+     70,
+     225
+    ]
+   ],
+   "matches": {
+    ":hover": [
+     "html",
+     "body",
+     "fields",
+     "readonly"
+    ],
+    ":active": [],
+    ":focus": [
+     "readonly"
+    ],
+    ":focus-visible": [
+     "readonly"
+    ],
+    ":focus-within": [
+     "html",
+     "body",
+     "fields",
+     "readonly"
+    ],
+    "div:hover > div": [],
+    "#outer:hover #inner": [],
+    "div:not(:hover)": [
+     "outer",
+     "middle",
+     "inner",
+     "sibling",
+     "controls",
+     "group",
+     "tabbable"
+    ],
+    "div:has(> :hover)": [
+     "fields"
+    ],
+    ":hover:active": [],
+    ":is(:hover, :focus)": [
+     "html",
+     "body",
+     "fields",
+     "readonly"
+    ],
+    ":focus-within > :focus": [
+     "readonly"
+    ],
+    "button:focus:not(:focus-visible)": [],
+    ":where(:focus-visible)": [
+     "readonly"
+    ],
+    "div:has(:focus-visible)": [
+     "fields"
+    ]
+   }
+  },
+  {
+   "step": "click textarea",
+   "actions": [
+    [
+     "move",
+     150,
+     230
+    ],
+    [
+     "press",
+     150,
+     230
+    ],
+    [
+     "release",
+     150,
+     230
+    ]
+   ],
+   "matches": {
+    ":hover": [
+     "html",
+     "body",
+     "fields",
+     "textarea"
+    ],
+    ":active": [],
+    ":focus": [
+     "textarea"
+    ],
+    ":focus-visible": [
+     "textarea"
+    ],
+    ":focus-within": [
+     "html",
+     "body",
+     "fields",
+     "textarea"
+    ],
+    "div:hover > div": [],
+    "#outer:hover #inner": [],
+    "div:not(:hover)": [
+     "outer",
+     "middle",
+     "inner",
+     "sibling",
+     "controls",
+     "group",
+     "tabbable"
+    ],
+    "div:has(> :hover)": [
+     "fields"
+    ],
+    ":hover:active": [],
+    ":is(:hover, :focus)": [
+     "html",
+     "body",
+     "fields",
+     "textarea"
+    ],
+    ":focus-within > :focus": [
+     "textarea"
+    ],
+    "button:focus:not(:focus-visible)": [],
+    ":where(:focus-visible)": [
+     "textarea"
+    ],
+    "div:has(:focus-visible)": [
+     "fields"
+    ]
+   }
+  },
+  {
+   "step": "script focus after text pointer focus",
+   "actions": [
+    [
+     "focus",
+     "button"
+    ]
+   ],
+   "matches": {
+    ":hover": [
+     "html",
+     "body",
+     "fields",
+     "textarea"
+    ],
+    ":active": [],
+    ":focus": [
+     "button"
+    ],
+    ":focus-visible": [],
+    ":focus-within": [
+     "html",
+     "body",
+     "controls",
+     "button"
+    ],
+    "div:hover > div": [],
+    "#outer:hover #inner": [],
+    "div:not(:hover)": [
+     "outer",
+     "middle",
+     "inner",
+     "sibling",
+     "controls",
+     "group",
+     "tabbable"
+    ],
+    "div:has(> :hover)": [
+     "fields"
+    ],
+    ":hover:active": [],
+    ":is(:hover, :focus)": [
+     "html",
+     "body",
+     "button",
+     "fields",
+     "textarea"
+    ],
+    ":focus-within > :focus": [
+     "button"
+    ],
+    "button:focus:not(:focus-visible)": [
+     "button"
+    ],
+    ":where(:focus-visible)": [],
+    "div:has(:focus-visible)": []
+   }
+  }
+ ]
+}

@@ -102,13 +102,13 @@ fn matching_follows_chromium() {
 }
 
 #[test]
-fn state_pseudo_classes_are_not_matched_silently() {
+fn form_state_pseudo_classes_are_not_matched_silently() {
     let oracle: Value = serde_json::from_str(ORACLE).unwrap();
     let (engine, elements) = fixture(&oracle);
-    let list = parse_selector_list(".box:hover", None).unwrap();
+    let list = parse_selector_list(".box:checked", None).unwrap();
     assert_eq!(
         engine.matches_selector_list(elements[2].0, &list),
-        Err(SelectorMatchError::UnsupportedPseudoClass("hover"))
+        Err(SelectorMatchError::UnsupportedPseudoClass("checked"))
     );
 }
 

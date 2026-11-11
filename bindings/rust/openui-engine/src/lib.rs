@@ -353,7 +353,12 @@ pub struct Engine {
     semantics: HashMap<u32, accessibility::SemanticProperties>,
     accessibility_nodes: HashMap<AccessibilityNodeId, AccessibilityNode>,
     accessibility_initialized: bool,
-    focus_visible: bool,
+    /// Blink's `Document::LastFocusType() == kMouse`: the last focus change
+    /// not requested by native code came from a pointer.
+    last_focus_from_pointer: bool,
+    /// Blink's `Document::HadKeyboardEvent()`: a key went down since the
+    /// last pointer focus change.
+    had_keyboard_event: bool,
     modal_root: Option<NodeHandle>,
     focus_before_modal: Option<NodeHandle>,
     animation_time_ms: f64,
@@ -446,7 +451,8 @@ impl Engine {
             semantics: HashMap::new(),
             accessibility_nodes: HashMap::new(),
             accessibility_initialized: false,
-            focus_visible: false,
+            last_focus_from_pointer: false,
+            had_keyboard_event: false,
             modal_root: None,
             focus_before_modal: None,
             animation_time_ms: 0.0,
@@ -1177,7 +1183,6 @@ impl Engine {
                 }
             }
             self.focused = None;
-            self.focus_visible = false;
         }
         self.pointer_capture
             .retain(|_, captured| !handles.contains(captured));
@@ -2480,7 +2485,6 @@ impl Engine {
         self.resolve(handle)?;
         if self.focused == Some(handle) {
             self.focused = None;
-            self.focus_visible = false;
             if let Ok(node) = self.resolve(handle) {
                 self.document
                     .node_mut(node)
