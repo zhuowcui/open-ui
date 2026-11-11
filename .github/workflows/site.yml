@@ -2,8 +2,9 @@ name: site
 
 # The project website in site/ (Astro and Starlight). Pull requests build
 # it; pushes to main build and deploy it to GitHub Pages. It never builds
-# Skia or Rust: the images and fonts it shows are committed files, copied
-# and hash-checked by site/scripts/sync-assets.mjs.
+# Skia or Rust: the app screenshots are committed PNGs rendered by
+# site/showcase, and the fonts are copied and hash-checked by
+# site/scripts/sync-assets.mjs.
 
 on:
   push:
@@ -32,14 +33,12 @@ jobs:
     env:
       ASTRO_TELEMETRY_DISABLED: "1"
     steps:
-      # Only the site and the committed files it copies (site/scripts/assets.json).
+      # Only the site and the fonts it copies (site/scripts/assets.json).
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           sparse-checkout: |
             site
             components/assets/fonts/geist
-            docs/renderer/evidence/native-fragmented-fieldset-v1
-            docs/renderer/evidence/native-fragmented-fieldset-public-v1
 
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:

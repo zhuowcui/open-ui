@@ -1,0 +1,129 @@
+---
+// The example card drawn by Chromium (site/showcase/capture.py) and by Open
+// UI (site/showcase, scene example-openui), same size and scale. A range
+// input reveals one over the other.
+import chromium from '../assets/showcase/example-chromium-light.png';
+import openui from '../assets/showcase/example-openui-light.png';
+const size = { width: openui.width / 2, height: openui.height / 2 };
+---
+
+<figure class="compare" style="--split: 50%">
+  <div class="stage">
+    <img src={chromium.src} {...size} alt="The card rendered by Chrome" />
+    <img class="top" src={openui.src} {...size} alt="The same card rendered by Open UI" />
+    <div class="line" aria-hidden="true"><span></span></div>
+    <span class="tag left">Chrome</span>
+    <span class="tag right">Open UI</span>
+    <input
+      type="range"
+      min="0"
+      max="100"
+      value="50"
+      aria-label="Compare Chrome (left) with Open UI (right)"
+      aria-valuetext="Half and half"
+    />
+  </div>
+</figure>
+
+<script>
+  for (const figure of document.querySelectorAll<HTMLElement>('.compare')) {
+    const input = figure.querySelector('input')!;
+    const update = () => {
+      const value = Number(input.value);
+      figure.style.setProperty('--split', `${value}%`);
+      input.setAttribute('aria-valuetext', `${value}% Chrome, ${100 - value}% Open UI`);
+    };
+    input.addEventListener('input', update);
+  }
+</script>
+
+<style>
+  .compare {
+    margin: 0;
+  }
+  .stage {
+    position: relative;
+    border: 1px solid var(--ou-border);
+    border-radius: 16px;
+    overflow: hidden;
+    background: #fff;
+  }
+  img {
+    width: 100%;
+    height: auto;
+  }
+  .top {
+    position: absolute;
+    inset: 0;
+    clip-path: inset(0 0 0 var(--split));
+  }
+  .line {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--split);
+    width: 0;
+    border-left: 1px solid #a1a1aa;
+    pointer-events: none;
+  }
+  .line span {
+    position: absolute;
+    top: 50%;
+    left: -14px;
+    width: 28px;
+    height: 28px;
+    margin-top: -14px;
+    border-radius: 50%;
+    background: #fff;
+    border: 1px solid #d4d4d8;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.12);
+  }
+  .line span::before,
+  .line span::after {
+    content: '';
+    position: absolute;
+    top: 9px;
+    border: 5px solid transparent;
+  }
+  .line span::before {
+    left: 2px;
+    border-right-color: #52525b;
+  }
+  .line span::after {
+    right: 2px;
+    border-left-color: #52525b;
+  }
+  .tag {
+    position: absolute;
+    top: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: #f4f4f5;
+    color: #3f3f46;
+    pointer-events: none;
+  }
+  .left {
+    left: 12px;
+  }
+  .right {
+    right: 12px;
+  }
+  input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: ew-resize;
+  }
+  input:focus-visible + * {
+    outline: none;
+  }
+  .stage:has(input:focus-visible) {
+    outline: 2px solid var(--ou-accent);
+    outline-offset: 2px;
+  }
+</style>

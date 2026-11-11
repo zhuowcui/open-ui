@@ -1,488 +1,859 @@
 ---
-import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
-import { Code } from '@astrojs/starlight/components';
-import CompareSlider from '../components/CompareSlider.astro';
+import { Code } from 'astro:components';
+import '../styles/fonts.css';
+import '../styles/theme.css';
+import Shot from '../components/Shot.astro';
+import Icon from '../components/Icon.astro';
+import Compare from '../components/Compare.astro';
+import CopyCommand from '../components/CopyCommand.astro';
+import exampleSource from '../../showcase/src/example.rs?raw';
+import { base, nav, repo, install } from '../lib/site';
 
-const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
-const repo = 'https://github.com/zhuowcui/open-ui';
-const blob = `${repo}/blob/main/`;
-const pr = (n: number) => `${repo}/pull/${n}`;
+const title = 'Open UI: native desktop apps in Rust, styled with CSS';
+const description =
+  'Build native desktop apps in Rust with markup and the CSS you already know. No webview, no JavaScript, one binary. Windows and Linux, macOS next.';
 
-// From bindings/rust/openui-cli/templates/default/src/app.rs.tmpl on main.
-const example = `use crate::State;
-use openui::prelude::*;
-
-pub fn root(state: State) -> ViewNode {
-    let count = state.count;
-    view! {
-        <div
-            style:display="flex"
-            style:flex-direction="column"
-            style:align-items="center"
-            style:gap="16px"
-            style:min-height="100vh"
-        >
-            <h1 style:font-size="24px">"my-app"</h1>
-            <button
-                style:padding="8px 20px"
-                style:font-size="16px"
-                on:click={move |_| count.set(count.get() + 1)}
-            >
-                "Count"
-            </button>
-            <p>{match count.get() {
-                1 => "Clicked 1 time".to_owned(),
-                clicks => format!("Clicked {clicks} times"),
-            }}</p>
-        </div>
-    }
-}`;
-
-const batteries = [
-  { name: 'CLI', text: '`openui new`, `dev` (rebuild and restart on save), `build` and `doctor`.', pr: 93 },
-  { name: 'Windows', text: 'Several windows on one event loop.', pr: 96 },
-  { name: 'Async', text: 'Tasks on the UI thread and in the background, wired to signals.', pr: 98 },
-  { name: 'Clipboard', text: 'Text on Win32, X11 and Wayland.', pr: 99 },
-  { name: 'Dialogs', text: 'Native open, save and folder pickers.', pr: 100 },
-  { name: 'Menus', text: 'App menu with accelerators: native on Windows, drawn on Linux.', pr: 101 },
-  { name: 'HTTP', text: 'A client over rustls and the system roots.', pr: 105 },
-  { name: 'Headless tests', text: 'Click, type and find text without a window; exact PNG snapshots.', pr: 106 },
+const features = [
+  {
+    icon: 'palette',
+    title: 'Styled with CSS',
+    body: 'Real CSS properties and values, checked when you compile. Flexbox, grid, borders and web fonts behave as they do on the web.',
+  },
+  {
+    icon: 'app-window',
+    title: 'Native, no webview',
+    body: 'Open UI lays out and paints your views itself, with Skia. You ship one executable, not a browser.',
+  },
+  {
+    icon: 'package-check',
+    title: 'Batteries included',
+    body: 'Windows, menus, file dialogs, clipboard, HTTP and async tasks are part of the framework.',
+  },
+  {
+    icon: 'flask-conical',
+    title: 'Testable by default',
+    body: 'Mount views headless, click and type like a user, and compare frames with pixel snapshots.',
+  },
+  {
+    icon: 'terminal',
+    title: 'One CLI',
+    body: 'openui new, dev and build: start an app, rebuild on save, and package a release.',
+  },
+  {
+    icon: 'monitor',
+    title: 'Windows and Linux',
+    body: 'Both are supported in the first alpha. macOS is next.',
+  },
 ];
 
-const md = (s: string) => s.replace(/`([^`]+)`/g, '<code>$1</code>');
+const tiles = [
+  { name: 'notifications', alt: 'A notifications panel with two messages and a Mark all as read button' },
+  { name: 'buttons', alt: 'Buttons in the default, secondary, outline, ghost, destructive and link styles' },
+  { name: 'team', alt: 'A team list with avatars, names, roles and an Invite people button' },
+  { name: 'badges', alt: 'Badges in the default, secondary, outline, destructive, ghost and link styles' },
+  { name: 'stat', alt: 'A monthly revenue figure with a progress bar' },
+  { name: 'settings', alt: 'A label and description above horizontal and vertical separators' },
+];
 ---
 
-<StarlightPage
-  frontmatter={{
-    title: 'The look of the web, without a browser',
-    description:
-      'Open UI is an experimental native Rust UI framework that lays out and paints CSS with Skia and measures its output against Chromium, pixel by pixel.',
-    template: 'splash',
-    hero: {
-      title: 'The look of the web, without&nbsp;a&nbsp;browser.',
-      tagline:
-        'Open UI is a native Rust UI framework. It lays out and paints CSS with Skia, with no HTML, no JavaScript and no webview, and compares its pixels with Chromium 147.',
-      actions: [
-        { text: 'Get started', link: `${base}getting-started/`, icon: 'right-arrow' },
-        { text: 'How we measure', link: `${base}fidelity/`, variant: 'minimal' },
-        { text: 'GitHub', link: repo, variant: 'minimal', icon: 'external' },
-      ],
-    },
-  }}
->
-  <div class="not-content landing">
-    <p class="alpha" role="note">
-      <span class="alpha-tag">Experimental alpha</span>
-      Not released yet. The API changes without notice, and alpha.1 targets Windows and Linux.
-    </p>
-
-    <section aria-labelledby="measured">
-      <h2 id="measured">Measured against Chromium</h2>
-      <p class="lede">
-        Every comparison renders the same page in pinned Chrome for Testing 147.0.7727.50 and in Open UI, at the same
-        size and device scale, and compares the RGBA bytes. Drag the line, or focus it and use the arrow keys.
-      </p>
-      <CompareSlider />
-    </section>
-
-    <section aria-labelledby="numbers">
-      <h2 id="numbers">Current numbers</h2>
-      <dl class="stats">
-        <div>
-          <dt>Census, 10 CSS areas</dt>
-          <dd><span class="big">22,517</span> of 23,728 comparisons exact (94.9%)</dd>
-          <dd class="cite">
-            Linux, four profiles, WPT-derived tests that mostly use the Ahem test font.{' '}
-            <a href={blob + 'docs/progress/woff2-decode-2026-11-09.md'}>Source</a>, 9&nbsp;Nov&nbsp;2026.
-          </dd>
-        </div>
-        <div>
-          <dt>CSS Grid coverage</dt>
-          <dd><span class="big">2,218</span> of 4,204 exact (52.8%)</dd>
-          <dd class="cite">
-            A separate suite, measured once; 39 tests panic.{' '}
-            <a href={blob + 'docs/progress/grid-coverage-2026-11-09.md'}>Source</a>, 9&nbsp;Nov&nbsp;2026.
-          </dd>
-        </div>
-        <div>
-          <dt><code>oklch()</code>, <code>oklab()</code>, <code>color-mix()</code></dt>
-          <dd><span class="big">54</span> of 54 swatches exact</dd>
-          <dd class="cite">
-            Linux and Windows captures.{' '}
-            <a href={blob + 'docs/progress/color-functions-2026-11-09.md'}>Source</a>, 9&nbsp;Nov&nbsp;2026.
-          </dd>
-        </div>
-      </dl>
-      <p class="fine">
-        Not measured yet: real-font text at scale, tables, transforms and most other areas, and performance. shadcn/ui
-        components with text are not exact yet. Nothing here is a release qualification.{' '}
-        <a href={`${base}fidelity/`}>What is and isn't measured</a>.
-      </p>
-    </section>
-
-    <section aria-labelledby="code">
-      <h2 id="code">Familiar markup, compiled</h2>
-      <p class="lede">
-        Views are written with the <code>view!</code> macro. Styles are CSS properties in CSS syntax, checked when the
-        app compiles: an unknown property or a bad value is a build error, not a blank screen.
-      </p>
-      <Code code={example} lang="rust" title="src/app.rs" />
-      <p class="fine">
-        From the <a href={blob + 'bindings/rust/openui-cli/templates/default/src/app.rs.tmpl'}>default template</a>, with
-        two style lines and the status line left out.
-        Typed <code>style!</code>, <code>css!</code> and <code>stylesheet!</code>, class names, <code>:hover</code> and
-        theme tokens are designed in <a href={blob + 'docs/alpha/rfcs/0001-typed-style-rules.md'}>RFC 0001</a> and not
-        merged yet.
-      </p>
-    </section>
-
-    <section aria-labelledby="pillars">
-      <h2 id="pillars" class="sr-only">Principles</h2>
-      <div class="pillars">
-        <article>
-          <h3>Familiar styling</h3>
-          <p>
-            Flexbox, grid, borders, gradients and colors, written as CSS properties, so web designs and component libraries
-            such as shadcn/ui can be ported rather than redrawn.
-          </p>
-        </article>
-        <article>
-          <h3>Native binary</h3>
-          <p>
-            One Rust executable with a CPU Skia rasterizer. No webview, no bundled browser, and no JavaScript, now or
-            later.
-          </p>
-        </article>
-        <article>
-          <h3>Measured fidelity</h3>
-          <p>
-            A change to the engine lands only if the census shows no regression. Results are published per area,
-            differences included.
-          </p>
-        </article>
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
+    <script is:inline>
+      // The same setting as the docs (Starlight's theme select).
+      (() => {
+        let stored = '';
+        try {
+          stored = localStorage.getItem('starlight-theme') || '';
+        } catch {}
+        const theme =
+          stored === 'light' || stored === 'dark'
+            ? stored
+            : matchMedia('(prefers-color-scheme: light)').matches
+              ? 'light'
+              : 'dark';
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="nav">
+      <div class="container nav-inner">
+        <a class="brand" href={base} aria-label="Open UI home">
+          <img src={`${base}favicon.svg`} alt="" width="22" height="22" />
+          <span>Open UI</span>
+          <span class="alpha">alpha</span>
+        </a>
+        <nav class="nav-links" aria-label="Site">
+          {nav.map((item) => <a class="nav-link" href={item.href}>{item.label}</a>)}
+          <a class="nav-icon" href={repo} aria-label="GitHub">
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 0-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.2.5-2.3 1.3-3.1-.2-.4-.6-1.6 0-3.2 0 0 1-.3 3.4 1.2a11.5 11.5 0 0 1 6 0C17.3 4.6 18.3 5 18.3 5c.7 1.6.2 2.8.1 3.2.8.8 1.3 1.9 1.3 3.1 0 4.6-2.8 5.6-5.5 5.9.5.4.9 1.1.9 2.2v3.3c0 .3.1.7.8.6A12 12 0 0 0 12 .3"/></svg>
+          </a>
+          <button class="nav-icon theme-toggle" type="button" aria-label="Switch to light theme">
+            <Icon name="sun" size={18} class="when-dark" />
+            <Icon name="moon" size={18} class="when-light" />
+          </button>
+        </nav>
       </div>
-    </section>
+    </header>
 
-    <section aria-labelledby="batteries">
-      <h2 id="batteries">Batteries included</h2>
-      <p class="lede">On <code>main</code> today, each in its own merged pull request:</p>
-      <ul class="batteries">
-        {
-          batteries.map((b) => (
-            <li>
-              <strong>{b.name}</strong>
-              <span set:html={md(b.text)} />
-              <a href={pr(b.pr)} aria-label={`${b.name}: pull request ${b.pr}`}>
-                #{b.pr}
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-    </section>
+    <main id="main">
+      <!-- Hero -->
+      <section class="hero">
+        <div class="container hero-copy">
+          <a class="pill" href={`${base}docs/roadmap/`}>
+            <span class="pill-dot" aria-hidden="true"></span>
+            alpha.1 · Windows and Linux · macOS next
+            <Icon name="arrow-right" size={14} />
+          </a>
+          <h1>Native desktop apps in Rust, styled like the web.</h1>
+          <p class="lede">
+            Write your interface with markup and the CSS you already know. Open UI lays it out and paints
+            it the way a browser would, then ships it as one native binary. No webview, no JavaScript.
+          </p>
+          <div class="actions">
+            <a class="button primary" href={`${base}docs/getting-started/`}>Get started</a>
+            <a class="button secondary" href={repo}>View on GitHub</a>
+          </div>
+          <CopyCommand command={install} />
+        </div>
+        <div class="container hero-shot">
+          <figure class="window">
+            <div class="titlebar" aria-hidden="true">
+              <span class="titlebar-title">Acme · Overview</span>
+              <span class="titlebar-controls"><i class="min"></i><i class="max"></i><i class="close"></i></span>
+            </div>
+            <Shot
+              name="app"
+              alt="A dashboard app with a sidebar, three stat cards, a list of recent deployments with status badges, and a team list"
+              loading="eager"
+            />
+          </figure>
+          <p class="shot-note">Rendered by Open UI. Every app image on this site is a real render.</p>
+        </div>
+      </section>
 
-    <section aria-labelledby="platforms">
-      <h2 id="platforms">Platforms</h2>
-      <table class="platforms">
-        <thead>
-          <tr>
-            <th scope="col">Platform</th>
-            <th scope="col">Target</th>
-            <th scope="col">State</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <th scope="row">Linux</th>
-            <td>alpha.1</td>
-            <td>Windowing on X11 and Wayland, input, AT-SPI accessibility. The census runs here.</td>
-          </tr>
-          <tr>
-            <th scope="row">Windows</th>
-            <td>alpha.1</td>
-            <td>Builds and passes tests in CI, DirectWrite text, an experimental Win32 window. IME, drag and drop and packaging are unverified.</td>
-          </tr>
-          <tr>
-            <th scope="row">macOS</th>
-            <td>alpha.2</td>
-            <td>Not started: it needs Mac hardware and a macOS Chromium oracle.</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
+      <!-- Code and result -->
+      <section class="section">
+        <div class="container">
+          <p class="eyebrow">Write it</p>
+          <h2>Markup and CSS, compiled to a native app</h2>
+          <p class="section-lede">
+            Views are Rust functions. Styles are CSS, checked when you build. Components from shadcn/ui
+            come rebuilt in Rust.
+          </p>
+          <div class="split">
+            <div class="code-pane">
+              <div class="pane-bar"><span>src/deploy_card.rs</span></div>
+              <Code code={exampleSource.trimEnd()} lang="rust" themes={{ light: 'github-light', dark: 'github-dark' }} defaultColor={false} />
+            </div>
+            <div class="result-pane">
+              <div class="pane-bar"><span>Result</span></div>
+              <div class="result-stage">
+                <Shot name="example" alt="A card titled Production with a Live badge, a line of text and two buttons, Redeploy and View logs" />
+              </div>
+              <p class="pane-note">Drawn by Open UI from the code on the left.</p>
+            </div>
+          </div>
+        </div>
+      </section>
 
-    <section aria-labelledby="fine-print" class="notes">
-      <h2 id="fine-print">Fine print</h2>
-      <ul>
-        <li>
-          <strong>Working name.</strong> "Open UI" is a placeholder until the project picks its own name. This project is
-          not affiliated with the W3C <a href="https://open-ui.org/">Open UI Community Group</a> at open-ui.org.
-        </li>
-        <li>
-          <strong>This site is HTML.</strong> Open UI does not output HTML, so this site is built with Astro and
-          Starlight and rendered by your browser.
-        </li>
-        <li>
-          <strong>Sources.</strong> Every number links to the committed record it comes from. Older private or
-          historical measurements are labeled as such.
-        </li>
-      </ul>
-    </section>
-  </div>
-</StarlightPage>
+      <!-- Features -->
+      <section class="section band">
+        <div class="container">
+          <p class="eyebrow">What you get</p>
+          <h2>Everything an app needs, in one framework</h2>
+          <div class="features">
+            {
+              features.map((feature) => (
+                <div class="feature">
+                  <span class="feature-icon">
+                    <Icon name={feature.icon} size={20} />
+                  </span>
+                  <h3>{feature.title}</h3>
+                  <p>{feature.body}</p>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+      </section>
+
+      <!-- Components -->
+      <section class="section">
+        <div class="container">
+          <p class="eyebrow">Components</p>
+          <h2>shadcn/ui, rebuilt in Rust</h2>
+          <p class="section-lede">
+            The buttons, badges, labels and separators you know from shadcn/ui, with the same sizes,
+            colors and variants, in light and dark.
+          </p>
+          <div class="gallery">
+            {
+              tiles.map((tile) => (
+                <div class="tile">
+                  <Shot name={tile.name} alt={tile.alt} />
+                </div>
+              ))
+            }
+          </div>
+          <a class="more" href={`${base}components/`}>Browse components <Icon name="arrow-right" size={16} /></a>
+        </div>
+      </section>
+
+      <!-- Fidelity -->
+      <section class="section band">
+        <div class="container fidelity">
+          <div class="fidelity-copy">
+            <p class="eyebrow">Fidelity</p>
+            <h2>Looks like the web</h2>
+            <p>
+              The card from the example, drawn by Chrome from HTML and by Open UI from Rust. Drag to
+              compare: boxes, borders and colors match, and text can still land a pixel off.
+            </p>
+            <a class="more" href={`${base}docs/rendering/`}>How rendering is checked <Icon name="arrow-right" size={16} /></a>
+          </div>
+          <Compare />
+        </div>
+      </section>
+
+      <!-- Call to action -->
+      <section class="section cta">
+        <div class="container cta-inner">
+          <h2>Build your first app</h2>
+          <p class="section-lede">Install the CLI, run <code>openui new my-app</code>, and you have a window in minutes.</p>
+          <div class="actions">
+            <a class="button primary" href={`${base}docs/getting-started/`}>Get started</a>
+            <a class="button secondary" href={`${base}docs/`}>Read the docs</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="container footer-inner">
+        <div class="footer-brand">
+          <a class="brand" href={base}>
+            <img src={`${base}favicon.svg`} alt="" width="20" height="20" />
+            <span>Open UI</span>
+          </a>
+          <p>An experimental alpha. Apache-2.0.</p>
+        </div>
+        <div class="footer-cols">
+          <div>
+            <h4>Learn</h4>
+            <a href={`${base}docs/getting-started/`}>Getting started</a>
+            <a href={`${base}docs/`}>Docs</a>
+            <a href={`${base}components/`}>Components</a>
+          </div>
+          <div>
+            <h4>Project</h4>
+            <a href={`${base}docs/roadmap/`}>Roadmap</a>
+            <a href={`${base}blog/`}>Blog</a>
+            <a href={repo}>GitHub</a>
+          </div>
+          <div>
+            <h4>About</h4>
+            <a href={`${base}docs/about/`}>About this site</a>
+            <a href={`${base}docs/rendering/`}>Rendering</a>
+          </div>
+        </div>
+      </div>
+      <div class="container fine">
+        “Open UI” is a working name; the project is unrelated to the W3C Open UI Community Group. This
+        site is HTML; the app images on it are rendered by Open UI.
+      </div>
+    </footer>
+
+    <script>
+      const toggle = document.querySelector<HTMLButtonElement>('.theme-toggle');
+      const label = () => {
+        const dark = document.documentElement.dataset.theme !== 'light';
+        toggle?.setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme');
+      };
+      label();
+      toggle?.addEventListener('click', () => {
+        const next = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
+        document.documentElement.dataset.theme = next;
+        try {
+          localStorage.setItem('starlight-theme', next);
+        } catch {}
+        label();
+      });
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    margin: 0;
+    background: var(--ou-bg);
+    color: var(--ou-text);
+    font-family: var(--sl-font);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+  a {
+    color: inherit;
+  }
+  :focus-visible {
+    outline: 2px solid var(--ou-accent);
+    outline-offset: 2px;
+  }
+  /* Shiki with CSS-variable colors, switched by the site theme. */
+  .astro-code,
+  .astro-code span {
+    color: var(--shiki-light);
+    background-color: var(--shiki-light-bg);
+  }
+  :root:not([data-theme='light']) .astro-code,
+  :root:not([data-theme='light']) .astro-code span {
+    color: var(--shiki-dark);
+    background-color: var(--shiki-dark-bg);
+  }
+  :root[data-theme='light'] .when-light,
+  :root:not([data-theme='light']) .when-dark {
+    display: none;
+  }
+</style>
 
 <style>
-  .landing {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 4rem;
-    margin-top: 1rem;
+  .container {
+    width: 100%;
+    max-width: 1152px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  .skip {
+    position: absolute;
+    left: -9999px;
+  }
+  .skip:focus {
+    left: 16px;
+    top: 12px;
+    z-index: 100;
+    background: var(--ou-surface);
+    padding: 8px 12px;
+    border-radius: 8px;
   }
 
-  .landing h2 {
-    font-size: 1.5rem;
-    line-height: 2rem;
+  /* Header */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    border-bottom: 1px solid var(--ou-border);
+    background: color-mix(in srgb, var(--ou-bg) 80%, transparent);
+    backdrop-filter: blur(12px);
+  }
+  .nav-inner {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .brand {
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
     font-weight: 600;
+    text-decoration: none;
     letter-spacing: -0.01em;
-    color: var(--sl-color-white);
-    margin: 0 0 0.5rem;
   }
-
-  .landing h3 {
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--sl-color-white);
-    margin: 0 0 0.375rem;
-  }
-
-  .landing p {
-    margin: 0;
-  }
-
-  .landing a {
-    color: var(--sl-color-white);
-    text-underline-offset: 0.2em;
-  }
-
-  .landing code {
-    font-family: var(--__sl-font-mono);
-    font-size: 0.875em;
-    background: var(--sl-color-gray-6);
-    padding: 0.0625rem 0.25rem;
-    border-radius: 0.25rem;
-  }
-
-  .lede {
-    color: var(--sl-color-gray-2);
-    max-width: 44rem;
-    margin-bottom: 1.25rem !important;
-  }
-
-  .fine {
-    font-size: 0.875rem;
-    color: var(--ou-muted);
-    margin-top: 1rem !important;
-    max-width: 48rem;
-  }
-
   .alpha {
+    font-family: var(--sl-font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1;
+    padding: 4px 6px;
+    border-radius: 999px;
+    border: 1px solid var(--ou-border-strong);
+    color: var(--ou-muted);
+  }
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .nav-link {
+    font-size: 14px;
+    color: var(--ou-muted);
+    text-decoration: none;
+    padding: 6px 10px;
+    border-radius: 8px;
+  }
+  .nav-link:hover {
+    color: var(--ou-text);
+  }
+  .nav-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    color: var(--ou-muted);
+    background: none;
+    border: 0;
+    cursor: pointer;
+  }
+  .nav-icon:hover {
+    color: var(--ou-text);
+    background: var(--ou-accent-soft);
+  }
+
+  /* Hero */
+  .hero {
+    padding: clamp(56px, 9vw, 104px) 0 clamp(56px, 8vw, 96px);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--ou-border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--ou-border) 1px, transparent 1px);
+    background-size: 32px 32px;
+    mask-image: radial-gradient(ellipse 70% 50% at 50% 0%, #000 30%, transparent 75%);
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  .hero-copy {
+    position: relative;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--ou-muted);
+    text-decoration: none;
+    padding: 4px 12px;
+    border: 1px solid var(--ou-border);
+    border-radius: 999px;
+    background: var(--ou-bg);
+  }
+  .pill:hover {
+    color: var(--ou-text);
+    border-color: var(--ou-border-strong);
+  }
+  .pill-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--ou-accent);
+  }
+  h1 {
+    margin: 24px 0 0;
+    max-width: 18ch;
+    font-size: clamp(40px, 6.4vw, 68px);
+    line-height: 1.04;
+    font-weight: 650;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+  }
+  .lede {
+    margin: 20px 0 0;
+    max-width: 620px;
+    font-size: clamp(17px, 2vw, 19px);
+    line-height: 1.55;
+    color: var(--ou-muted);
+    text-wrap: pretty;
+  }
+  .actions {
+    margin-top: 32px;
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+  .button {
+    display: inline-flex;
     align-items: center;
-    gap: 0.5rem 0.75rem;
-    padding: 0.75rem 1rem;
-    border: 1px solid var(--ou-border);
-    border-radius: 0.5rem;
-    font-size: 0.875rem;
-    color: var(--sl-color-gray-2);
+    height: 42px;
+    padding: 0 20px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition: background-color 0.15s, border-color 0.15s;
   }
-
-  .alpha-tag {
-    font-family: var(--__sl-font-mono);
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    padding: 0.125rem 0.5rem;
-    border-radius: 0.25rem;
-    border: 1px solid var(--sl-color-gray-4);
-    color: var(--sl-color-white);
+  .button.primary {
+    background: var(--ou-button);
+    color: var(--ou-button-text);
   }
-
-  .stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
-    gap: 1px;
+  .button.primary:hover {
+    opacity: 0.9;
+  }
+  .button.secondary {
+    border-color: var(--ou-border-strong);
+    background: var(--ou-bg);
+  }
+  .button.secondary:hover {
+    background: var(--ou-accent-soft);
+  }
+  .hero-shot {
+    position: relative;
+    margin-top: clamp(48px, 7vw, 72px);
+  }
+  .hero-shot::before {
+    content: '';
+    position: absolute;
+    inset: 10% 8% -4% 8%;
+    background: radial-gradient(closest-side, var(--ou-glow), transparent);
+    filter: blur(40px);
+    pointer-events: none;
+  }
+  .window {
+    position: relative;
     margin: 0;
-    border: 1px solid var(--ou-border);
-    border-radius: 0.5rem;
+    border-radius: 12px;
     overflow: hidden;
-    background: var(--ou-border);
-  }
-
-  .stats > div {
-    padding: 1.25rem;
-    background: var(--sl-color-black);
-  }
-
-  .stats dt {
-    font-size: 0.8125rem;
-    color: var(--ou-muted);
-  }
-
-  .stats dd {
-    margin: 0.25rem 0 0;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .big {
-    display: block;
-    font-size: 2rem;
-    line-height: 2.5rem;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    color: var(--ou-exact);
-  }
-
-  .stats .cite {
-    font-size: 0.8125rem;
-    color: var(--ou-muted);
-    margin-top: 0.5rem;
-  }
-
-  .stats .cite a {
-    color: var(--ou-muted);
-  }
-
-  .pillars {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
-    gap: 1rem;
-  }
-
-  .pillars article {
-    padding: 1.25rem;
     border: 1px solid var(--ou-border);
-    border-radius: 0.5rem;
-    background-image:
-      linear-gradient(var(--ou-grid) 1px, transparent 1px),
-      linear-gradient(90deg, var(--ou-grid) 1px, transparent 1px);
-    background-size: 8px 8px;
+    box-shadow: var(--ou-shadow);
+    background: var(--ou-surface);
+  }
+  .titlebar {
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 0 0 14px;
+    border-bottom: 1px solid var(--ou-border);
+    background: var(--ou-bg-soft);
+    font-size: 12px;
+    color: var(--ou-muted);
+  }
+  .titlebar-controls {
+    display: flex;
+    height: 100%;
+  }
+  .titlebar-controls i {
+    width: 44px;
+    height: 100%;
+    position: relative;
+  }
+  .titlebar-controls i::before,
+  .titlebar-controls i::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    border-color: var(--ou-muted);
+  }
+  .min::before {
+    width: 10px;
+    border-top: 1px solid;
+    transform: translate(-50%, 0);
+  }
+  .max::before {
+    width: 9px;
+    height: 9px;
+    border: 1px solid;
+    transform: translate(-50%, -50%);
+  }
+  .close::before,
+  .close::after {
+    width: 12px;
+    border-top: 1px solid;
+    transform: translate(-50%, 0) rotate(45deg);
+  }
+  .close::after {
+    transform: translate(-50%, 0) rotate(-45deg);
+  }
+  .shot-note {
+    position: relative;
+    margin: 16px 0 0;
+    text-align: center;
+    font-size: 13px;
+    color: var(--ou-muted);
   }
 
-  .pillars p {
-    font-size: 0.9375rem;
-    color: var(--sl-color-gray-2);
-  }
-
-  .batteries {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  /* Sections */
+  .section {
+    padding: clamp(64px, 9vw, 112px) 0;
     border-top: 1px solid var(--ou-border);
   }
-
-  .batteries li {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 0.125rem 0.75rem;
-    padding: 0.875rem 0.25rem;
-    border-bottom: 1px solid var(--ou-border);
-    font-size: 0.9375rem;
+  .band {
+    background: var(--ou-bg-soft);
   }
-
-  .batteries strong {
-    color: var(--sl-color-white);
-    font-weight: 600;
-  }
-
-  .batteries span {
-    grid-column: 1;
-    color: var(--sl-color-gray-2);
-  }
-
-  .batteries a {
-    grid-column: 2;
-    grid-row: 1;
-    font-family: var(--__sl-font-mono);
-    font-size: 0.8125rem;
-    color: var(--ou-muted);
-  }
-
-  .platforms {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.9375rem;
-  }
-
-  .platforms th,
-  .platforms td {
-    text-align: left;
-    vertical-align: top;
-    padding: 0.625rem 0.75rem 0.625rem 0;
-    border-bottom: 1px solid var(--ou-border);
-  }
-
-  .platforms thead th {
-    font-size: 0.8125rem;
-    font-weight: 500;
-    color: var(--ou-muted);
-  }
-
-  .platforms tbody th {
-    color: var(--sl-color-white);
-    font-weight: 600;
-  }
-
-  .platforms td {
-    color: var(--sl-color-gray-2);
-  }
-
-  .platforms td:nth-child(2) {
-    font-family: var(--__sl-font-mono);
-    font-size: 0.8125rem;
-    white-space: nowrap;
-  }
-
-  .notes ul {
+  .eyebrow {
     margin: 0;
-    padding-left: 1.25rem;
+    font-family: var(--sl-font-mono);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ou-accent);
+  }
+  h2 {
+    margin: 12px 0 0;
+    max-width: 20ch;
+    font-size: clamp(28px, 4vw, 40px);
+    line-height: 1.12;
+    font-weight: 650;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+  .section-lede {
+    margin: 16px 0 0;
+    max-width: 600px;
+    font-size: 17px;
+    color: var(--ou-muted);
+  }
+  .section-lede code {
+    font-family: var(--sl-font-mono);
+    font-size: 0.9em;
+    color: var(--ou-text);
+  }
+
+  /* Code and result */
+  .split {
+    margin-top: 40px;
     display: grid;
-    gap: 0.5rem;
-    color: var(--sl-color-gray-2);
-    font-size: 0.9375rem;
+    grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+  }
+  .code-pane,
+  .result-pane {
+    border: 1px solid var(--ou-border);
+    border-radius: 14px;
+    overflow: hidden;
+    background: var(--ou-surface);
+    display: flex;
+    flex-direction: column;
+  }
+  .pane-bar {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    border-bottom: 1px solid var(--ou-border);
+    font-family: var(--sl-font-mono);
+    font-size: 12px;
+    color: var(--ou-muted);
+    background: var(--ou-bg-soft);
+  }
+  .code-pane :global(pre) {
+    margin: 0;
+    padding: 18px 20px;
+    font-family: var(--sl-font-mono);
+    font-size: 12.5px;
+    line-height: 1.6;
+    overflow-x: auto;
+    flex: 1;
+  }
+  .code-pane :global(pre),
+  .code-pane :global(pre span) {
+    background-color: transparent !important;
+  }
+  .result-pane {
+    position: sticky;
+    top: 84px;
+  }
+  .result-stage {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+    background: #ffffff;
   }
 
-  .notes strong {
-    color: var(--sl-color-white);
+  .pane-note {
+    margin: 0;
+    padding: 12px 16px;
+    border-top: 1px solid var(--ou-border);
+    font-size: 13px;
+    color: var(--ou-muted);
   }
 
-  @media (max-width: 40rem) {
-    .landing {
-      gap: 3rem;
+  /* Features */
+  .features {
+    margin-top: 40px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+  .feature {
+    padding: 24px;
+    border: 1px solid var(--ou-border);
+    border-radius: 14px;
+    background: var(--ou-surface);
+  }
+  .feature-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: var(--ou-accent-soft);
+    color: var(--ou-accent);
+  }
+  .feature h3 {
+    margin: 18px 0 0;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .feature p {
+    margin: 6px 0 0;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ou-muted);
+  }
+
+  /* Components */
+  .gallery {
+    margin-top: 40px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+  .tile {
+    border: 1px solid var(--ou-border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .tile :global(img) {
+    width: 100%;
+  }
+  .more {
+    margin-top: 28px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
+  }
+  .more:hover {
+    color: var(--ou-accent);
+  }
+
+  /* Fidelity */
+  .fidelity {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+    gap: 48px;
+    align-items: center;
+  }
+  .fidelity-copy p:not(.eyebrow) {
+    margin: 16px 0 0;
+    font-size: 17px;
+    color: var(--ou-muted);
+  }
+
+  /* Call to action */
+  .cta-inner {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .cta h2 {
+    max-width: none;
+  }
+
+  /* Footer */
+  .footer {
+    border-top: 1px solid var(--ou-border);
+    padding: 48px 0 40px;
+    font-size: 14px;
+  }
+  .footer-inner {
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+  .footer-brand p {
+    margin: 10px 0 0;
+    color: var(--ou-muted);
+  }
+  .footer-cols {
+    display: flex;
+    gap: 64px;
+    flex-wrap: wrap;
+  }
+  .footer-cols h4 {
+    margin: 0 0 10px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .footer-cols a {
+    display: block;
+    margin-top: 6px;
+    color: var(--ou-muted);
+    text-decoration: none;
+  }
+  .footer-cols a:hover {
+    color: var(--ou-text);
+  }
+  .fine {
+    margin-top: 40px;
+    font-size: 12px;
+    color: var(--ou-muted);
+  }
+
+  @media (max-width: 900px) {
+    .split,
+    .fidelity {
+      grid-template-columns: minmax(0, 1fr);
     }
-
-    .platforms thead {
+    .features,
+    .gallery {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 640px) {
+    .container {
+      padding: 0 16px;
+    }
+    .features,
+    .gallery {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .nav-link {
+      padding: 6px;
+    }
+    .nav-link:nth-child(n + 2) {
       display: none;
     }
-
-    .platforms tr {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 0.25rem 0.75rem;
-      padding: 0.625rem 0;
-      border-bottom: 1px solid var(--ou-border);
-    }
-
-    .platforms th,
-    .platforms td {
-      border: 0;
-      padding: 0;
-    }
-
-    .platforms td:last-child {
-      grid-column: 1 / -1;
+    .titlebar-title {
+      display: none;
     }
   }
 </style>

@@ -1,0 +1,30 @@
+---
+// A screenshot rendered by Open UI (site/showcase), in the light and dark
+// versions when both exist. The PNGs are shown as rendered, at 2x.
+interface Props {
+  name: string;
+  alt: string;
+  class?: string;
+  loading?: 'eager' | 'lazy';
+}
+const { name, alt, class: className, loading = 'lazy' } = Astro.props;
+const images = import.meta.glob<{ default: ImageMetadata }>('../assets/showcase/*.png', {
+  eager: true,
+});
+const find = (file: string) => images[`../assets/showcase/${file}.png`]?.default;
+const light = find(`${name}-light`);
+const dark = find(`${name}-dark`);
+if (!light) throw new Error(`no showcase image ${name}-light.png`);
+const size = (image: ImageMetadata) => ({ width: image.width / 2, height: image.height / 2 });
+---
+
+{
+  dark ? (
+    <>
+      <img class:list={['ou-light', className]} src={light.src} {...size(light)} alt={alt} loading={loading} decoding="async" />
+      <img class:list={['ou-dark', className]} src={dark.src} {...size(dark)} alt={alt} loading={loading} decoding="async" />
+    </>
+  ) : (
+    <img class={className} src={light.src} {...size(light)} alt={alt} loading={loading} decoding="async" />
+  )
+}

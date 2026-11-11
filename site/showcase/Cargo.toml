@@ -1,0 +1,31 @@
+# Renders the website's app screenshots with Open UI. A separate Cargo
+# workspace, like components/, so the site's npm build and CI never touch
+# Rust or Skia. It repeats the patches of components/Cargo.toml.
+[workspace]
+resolver = "2"
+
+[package]
+name = "openui-site-showcase"
+description = "Renders the Open UI website's screenshots with Open UI"
+version = "0.0.0"
+edition = "2021"
+rust-version = "1.85"
+license = "Apache-2.0"
+publish = false
+
+[[bin]]
+name = "openui-site-showcase"
+path = "src/main.rs"
+
+[dependencies]
+openui = { version = "=0.2.0", path = "../../bindings/rust/openui" }
+openui-components = { path = "../../components/openui-components" }
+
+[patch.crates-io]
+skia-safe = { git = "https://github.com/rust-skia/rust-skia.git", rev = "a31b86ba3b767344d39af3b8c30043003d8fc991" }
+skia-bindings = { git = "https://github.com/rust-skia/rust-skia.git", rev = "a31b86ba3b767344d39af3b8c30043003d8fc991" }
+skrifa = { path = "../../bindings/rust/vendor/skrifa-v0_40" }
+read-fonts = { path = "../../bindings/rust/vendor/read-fonts-v0_37" }
+font-types = { path = "../../bindings/rust/vendor/font-types-v0_11" }
+bytemuck = { path = "../../bindings/rust/vendor/bytemuck-v1" }
+bytemuck_derive = { path = "../../bindings/rust/vendor/bytemuck_derive-v1" }

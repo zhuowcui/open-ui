@@ -3,5 +3,5 @@ dist/
 .astro/
 # Copied from the repository by scripts/sync-assets.mjs; see scripts/assets.json.
 src/assets/generated/
-public/compare/
 public/fonts/
+showcase/target/

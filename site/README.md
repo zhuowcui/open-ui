@@ -1,12 +1,13 @@
 # Project website
 
-The Open UI website: a landing page and docs built with
-[Astro](https://astro.build/) 7.3.8 and [Starlight](https://starlight.astro.build/)
-0.42.8, with Pagefind search. It is published to GitHub Pages at
-<https://zhuowcui.github.io/open-ui/> by `.github/workflows/site.yml`.
+The Open UI website: a landing page, docs and a components page, built with
+[Astro](https://astro.build/) 7.3.8 and
+[Starlight](https://starlight.astro.build/) 0.42.8, with Pagefind search. It
+is published to GitHub Pages at <https://zhuowcui.github.io/open-ui/> by
+`.github/workflows/site.yml`.
 
-"Open UI" is a working name, and the site says so; this project is unrelated
-to the W3C Open UI Community Group.
+"Open UI" is a working name; this project is unrelated to the W3C Open UI
+Community Group.
 
 ## Commands
 
@@ -22,35 +23,45 @@ npm run preview   # serve dist/
 npm run check-assets
 ```
 
-`dev` and `build` first run `scripts/sync-assets.mjs`.
+`dev` and `build` first run `scripts/sync-assets.mjs`, which copies Geist and
+Geist Mono from `components/assets/fonts/geist/` after checking the SHA-256
+recorded in `scripts/assets.json`.
 
-## Assets
+## Screenshots
 
-The site copies, never edits, files committed elsewhere in the repository:
+Every app image on the site is drawn by Open UI, headless, and committed in
+`src/assets/showcase/` as rendered. The site's build only reads them, so
+site CI never builds Rust or Skia.
 
-- Geist and Geist Mono from `components/assets/fonts/geist/` (SIL OFL 1.1).
-- The comparison images on the home page: Chromium 147.0.7727.50 captures and
-  Open UI renders from `docs/renderer/evidence/native-fragmented-fieldset-*`.
+| Path | What it is |
+| --- | --- |
+| `showcase/src/main.rs` | The scenes: the dashboard on the home page and the component tiles, light and dark, at device scale 2 |
+| `showcase/src/example.rs` | The card in the home page's code example; the page shows this file's source next to its render |
+| `showcase/render.ps1` | Builds the renderer with the CI Skia flags and the shared prebuilt Skia, and writes every scene (Windows) |
+| `showcase/reference/example.html` | The same card as HTML, with shadcn/ui's markup and compiled CSS from `components/reference/pages` |
+| `showcase/capture.py` | Draws that page with the pinned Chromium through the components harness (Linux or WSL) |
 
-[`scripts/assets.json`](scripts/assets.json) lists every source path, its
-SHA-256 and, for each image pair, the differing-pixel count its record
-states. `scripts/sync-assets.mjs` checks the digests, decodes each PNG pair,
-counts the pixels whose RGBA bytes differ and fails if a count differs from
-the record. It writes the copies and `src/assets/generated/comparisons.json`;
-all of these are ignored by git. The home page recounts the pixels in the
-visitor's browser when it draws the diff overlay.
+```powershell
+powershell -File site\showcase\render.ps1            # every scene
+powershell -File site\showcase\render.ps1 app team   # some scenes
+```
 
-To use another pair, add it to `assets.json` with its digests and recorded
-count, and add its directory to the workflow's `sparse-checkout` list.
+```sh
+python3 site/showcase/capture.py   # example-chromium-light.png
+```
+
+`showcase` is its own Cargo workspace, like `components/`, and uses only the
+public `openui` crate and `openui-components`. Its scenes stack content in
+block flow and use flex only for rows: Open UI's column flex boxes still
+size text items as if at their min-content width, which is also why the
+`Card` component is not used in them yet.
 
 ## Content
 
 | Path | Page |
 | --- | --- |
-| `src/pages/index.astro` | Home, with `src/components/CompareSlider.astro` |
-| `src/content/docs/getting-started.md` | Getting started, from the CLI and template on `main` |
-| `src/content/docs/fidelity.md` | How measurement works, current numbers, known failures |
-| `src/content/docs/{docs,devlog}/index.md`, `components.md`, `roadmap.md`, `about.md` | Short stubs |
-
-Every number on the site cites the committed record it comes from. When a
-record changes, update the page that quotes it.
+| `src/pages/index.astro` | Home: hero, code and result, features, components, the browser comparison, call to action |
+| `src/content/docs/docs/` | Introduction, getting started, views and styles, testing, rendering, roadmap, about |
+| `src/content/docs/components.mdx` | Components |
+| `src/content/docs/blog/` | Blog |
+| `src/components/` | `Shot` (a light and dark screenshot), `Compare` (the comparison slider), `CopyCommand`, `Icon` (Lucide), `HeaderLinks` (the docs header's links) |

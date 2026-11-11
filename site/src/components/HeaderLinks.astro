@@ -1,0 +1,21 @@
+---
+// Starlight's SocialIcons, with the site's top-level links before them.
+import Default from '@astrojs/starlight/components/SocialIcons.astro';
+import { nav } from '../lib/site';
+---
+
+<nav class="ou-header-links" aria-label="Site">
+  {nav.map((item) => <a href={item.href}>{item.label}</a>)}
+</nav>
+<Default />
+
+<style>
+  a {
+    color: var(--sl-color-gray-2);
+    font-size: var(--sl-text-sm);
+    text-decoration: none;
+  }
+  a:hover {
+    color: var(--sl-color-white);
+  }
+</style>

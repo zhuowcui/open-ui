@@ -12,9 +12,13 @@ export default defineConfig({
     starlight({
       title: 'Open UI',
       description:
-        'An experimental native Rust UI framework that draws CSS layout and paint with Skia, measured pixel by pixel against Chromium.',
+        'Native desktop apps in Rust, styled with the CSS you know. No webview, one binary.',
       favicon: '/favicon.svg',
+      logo: { src: './src/assets/logo.svg' },
       customCss: ['./src/styles/fonts.css', './src/styles/theme.css'],
+      components: {
+        SocialIcons: './src/components/HeaderLinks.astro',
+      },
       social: [
         { icon: 'github', label: 'GitHub', href: 'https://github.com/zhuowcui/open-ui' },
       ],
@@ -25,13 +29,30 @@ export default defineConfig({
         { tag: 'meta', attrs: { name: 'color-scheme', content: 'light dark' } },
       ],
       sidebar: [
-        { label: 'Getting started', link: '/getting-started/' },
-        { label: 'Fidelity', link: '/fidelity/' },
-        { label: 'Docs', link: '/docs/' },
+        {
+          label: 'Start here',
+          items: [
+            { label: 'Introduction', link: '/docs/' },
+            { label: 'Getting started', link: '/docs/getting-started/' },
+          ],
+        },
+        {
+          label: 'Guides',
+          items: [
+            { label: 'Views and styles', link: '/docs/views-and-styles/' },
+            { label: 'Testing', link: '/docs/testing/' },
+            { label: 'Rendering', link: '/docs/rendering/' },
+          ],
+        },
         { label: 'Components', link: '/components/' },
-        { label: 'Roadmap', link: '/roadmap/' },
-        { label: 'Devlog', link: '/devlog/' },
-        { label: 'About this site', link: '/about/' },
+        {
+          label: 'Project',
+          items: [
+            { label: 'Roadmap', link: '/docs/roadmap/' },
+            { label: 'Blog', link: '/blog/' },
+            { label: 'About', link: '/docs/about/' },
+          ],
+        },
       ],
     }),
   ],

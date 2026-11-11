@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<!--
+  The browser side of the home page's comparison: the card in
+  site/showcase/src/example.rs, written as HTML. The inline styles are the
+  example's `style:` attributes; the button and badge use shadcn/ui's own
+  markup and classes from components/reference/pages (outline and small
+  buttons, the secondary badge), with the stylesheet Tailwind compiled there.
+  The wrapper repeats the showcase renderer's page: Geist at 14px, line
+  height 1.5, the card centred in a 440x220 viewport. capture.sh draws it
+  with the pinned Chromium.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>example</title>
+<link rel="stylesheet" href="../../../components/reference/pages/reference.css">
+</head>
+<body style="background-color: #ffffff; color: oklch(0.145 0 0)">
+<div style="font-family: Geist; line-height: 1.5; font-size: 14px">
+<div style="display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden">
+  <div style="box-sizing: border-box; width: 360px; padding: 24px; border: 1px solid #e5e5e5; border-radius: 14px">
+    <div style="display: flex; justify-content: space-between">
+      <div style="font-size: 16px; font-weight: 600">Production</div>
+      <span data-slot="badge" data-variant="secondary" class="inline-flex w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-full border border-transparent px-2 py-0.5 text-xs font-medium whitespace-nowrap transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&amp;&gt;svg]:pointer-events-none [&amp;&gt;svg]:size-3 bg-secondary text-secondary-foreground [a&amp;]:hover:bg-secondary/90">Live</span>
+    </div>
+    <div style="margin: 4px 0 20px; color: #737373">Deployed 4 minutes ago from main</div>
+    <div style="display: flex; gap: 8px">
+      <button data-slot="button" data-variant="default" data-size="sm" class="inline-flex shrink-0 items-center justify-center text-sm font-medium whitespace-nowrap transition-all outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 [&amp;_svg:not([class*=&#x27;size-&#x27;])]:size-4 bg-primary text-primary-foreground hover:bg-primary/90 h-8 gap-1.5 rounded-md px-3 has-[&gt;svg]:px-2.5">Redeploy</button>
+      <button data-slot="button" data-variant="outline" data-size="sm" class="inline-flex shrink-0 items-center justify-center text-sm font-medium whitespace-nowrap transition-all outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 [&amp;_svg:not([class*=&#x27;size-&#x27;])]:size-4 border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50 h-8 gap-1.5 rounded-md px-3 has-[&gt;svg]:px-2.5">View logs</button>
+    </div>
+  </div>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,85 @@
+---
+import Icon from './Icon.astro';
+interface Props {
+  command: string;
+}
+const { command } = Astro.props;
+---
+
+<div class="copy">
+  <code><span class="prompt" aria-hidden="true">$</span> {command}</code>
+  <button type="button" aria-label="Copy the command" data-command={command}>
+    <Icon name="copy" size={16} class="icon-copy" />
+    <Icon name="check" size={16} class="icon-done" />
+  </button>
+</div>
+
+<script>
+  for (const button of document.querySelectorAll<HTMLButtonElement>('.copy button')) {
+    button.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(button.dataset.command ?? '');
+        button.classList.add('done');
+        button.setAttribute('aria-label', 'Copied');
+        setTimeout(() => {
+          button.classList.remove('done');
+          button.setAttribute('aria-label', 'Copy the command');
+        }, 1600);
+      } catch {}
+    });
+  }
+</script>
+
+<style>
+  .copy {
+    margin-top: 28px;
+    width: min(100%, 720px);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 4px 4px 16px;
+    border: 1px solid var(--ou-border);
+    border-radius: 10px;
+    background: var(--ou-bg-soft);
+    text-align: left;
+  }
+  code {
+    flex: 1;
+    min-width: 0;
+    overflow-x: auto;
+    white-space: nowrap;
+    font-family: var(--sl-font-mono);
+    font-size: 13px;
+    padding: 8px 0;
+    scrollbar-width: none;
+  }
+  .prompt {
+    color: var(--ou-muted);
+    user-select: none;
+  }
+  button {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border: 0;
+    border-radius: 8px;
+    background: none;
+    color: var(--ou-muted);
+    cursor: pointer;
+  }
+  button:hover {
+    color: var(--ou-text);
+    background: var(--ou-accent-soft);
+  }
+  button :global(.icon-done),
+  button.done :global(.icon-copy) {
+    display: none;
+  }
+  button.done :global(.icon-done) {
+    display: inline;
+    color: var(--ou-accent);
+  }
+</style>

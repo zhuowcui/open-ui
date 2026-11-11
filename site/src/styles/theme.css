@@ -1,6 +1,6 @@
 /*
- * Zinc neutrals with one diff-tool accent: green means exact, magenta means
- * a mismatch. Nothing else is colored.
+ * Zinc neutrals and one accent (blue). Shared by the docs (Starlight) and
+ * the landing page.
  */
 :root {
   --sl-font: 'Geist', ui-sans-serif, system-ui, sans-serif;
@@ -18,30 +18,24 @@
   --sl-color-bg-nav: #09090b;
   --sl-color-bg-sidebar: #09090b;
 
-  --sl-color-accent-low: #27272a;
-  --sl-color-accent: #d4d4d8;
-  --sl-color-accent-high: #fafafa;
-  --sl-color-text-accent: #fafafa;
-  --sl-color-bg-accent: #fafafa;
-  --sl-color-text-invert: #09090b;
+  --sl-color-accent-low: #172554;
+  --sl-color-accent: #60a5fa;
+  --sl-color-accent-high: #bfdbfe;
+  --sl-color-text-accent: #93c5fd;
 
-  /* Notes and cautions stay neutral; color is reserved for diff results. */
-  --sl-color-blue-low: #18181b;
-  --sl-color-blue: #a1a1aa;
-  --sl-color-blue-high: #fafafa;
-  --sl-color-orange-low: #18181b;
-  --sl-color-orange: #d4d4d8;
-  --sl-color-orange-high: #fafafa;
-
-  --ou-exact: #4ade80;
-  --ou-exact-bg: rgb(74 222 128 / 0.12);
-  --ou-mismatch: #f0abfc;
-  --ou-mismatch-solid: #ff00ff;
-  --ou-mismatch-bg: rgb(240 171 252 / 0.12);
-  --ou-grid: rgb(250 250 250 / 0.06);
+  --ou-bg: #09090b;
+  --ou-bg-soft: #0f0f12;
+  --ou-surface: #18181b;
   --ou-border: #27272a;
+  --ou-border-strong: #3f3f46;
+  --ou-text: #fafafa;
   --ou-muted: #a1a1aa;
-  --ou-card: #0c0c0e;
+  --ou-accent: #60a5fa;
+  --ou-accent-soft: rgb(96 165 250 / 0.12);
+  --ou-button: #fafafa;
+  --ou-button-text: #09090b;
+  --ou-shadow: 0 30px 80px -20px rgb(0 0 0 / 0.7), 0 0 0 1px rgb(255 255 255 / 0.06);
+  --ou-glow: rgb(96 165 250 / 0.14);
 }
 
 :root[data-theme='light'] {
@@ -57,29 +51,24 @@
   --sl-color-bg-nav: #ffffff;
   --sl-color-bg-sidebar: #ffffff;
 
-  --sl-color-accent-low: #f4f4f5;
-  --sl-color-accent: #3f3f46;
-  --sl-color-accent-high: #09090b;
-  --sl-color-text-accent: #09090b;
-  --sl-color-bg-accent: #18181b;
-  --sl-color-text-invert: #fafafa;
+  --sl-color-accent-low: #dbeafe;
+  --sl-color-accent: #2563eb;
+  --sl-color-accent-high: #1e3a8a;
+  --sl-color-text-accent: #1d4ed8;
 
-  --sl-color-blue-low: #f4f4f5;
-  --sl-color-blue: #71717a;
-  --sl-color-blue-high: #18181b;
-  --sl-color-orange-low: #f4f4f5;
-  --sl-color-orange: #3f3f46;
-  --sl-color-orange-high: #09090b;
-
-  --ou-exact: #15803d;
-  --ou-exact-bg: rgb(21 128 61 / 0.08);
-  --ou-mismatch: #a21caf;
-  --ou-mismatch-solid: #ff00ff;
-  --ou-mismatch-bg: rgb(162 28 175 / 0.07);
-  --ou-grid: rgb(9 9 11 / 0.05);
+  --ou-bg: #ffffff;
+  --ou-bg-soft: #fafafa;
+  --ou-surface: #ffffff;
   --ou-border: #e4e4e7;
+  --ou-border-strong: #d4d4d8;
+  --ou-text: #09090b;
   --ou-muted: #52525b;
-  --ou-card: #fafafa;
+  --ou-accent: #2563eb;
+  --ou-accent-soft: rgb(37 99 235 / 0.08);
+  --ou-button: #18181b;
+  --ou-button-text: #fafafa;
+  --ou-shadow: 0 30px 80px -24px rgb(24 24 27 / 0.28), 0 0 0 1px rgb(9 9 11 / 0.06);
+  --ou-glow: rgb(37 99 235 / 0.1);
 }
 
 body {
@@ -90,17 +79,17 @@ body {
   text-underline-offset: 0.2em;
 }
 
-/* Tables of measurements read better with tabular figures. */
-.sl-markdown-content table {
-  font-variant-numeric: tabular-nums;
+/* Header links (src/components/HeaderLinks.astro). */
+.ou-header-links {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
 }
 
-.ou-exact {
-  color: var(--ou-exact);
-}
-
-.ou-mismatch {
-  color: var(--ou-mismatch);
+/* Images that differ by theme: <img class="ou-light"> and <img class="ou-dark">. */
+:root[data-theme='light'] .ou-dark,
+:root:not([data-theme='light']) .ou-light {
+  display: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
