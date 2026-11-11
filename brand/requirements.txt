@@ -1,0 +1,6 @@
+# Pinned for byte-identical output from brand/build.py.
+fonttools==4.68.0
+brotli==1.2.1
+skia-python==144.1
+numpy==2.5.4
+uharfbuzz==0.57.0
