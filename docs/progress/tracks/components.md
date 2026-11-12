@@ -11,15 +11,68 @@ renderer.
 
 | Component | Fixtures | Exact | Evidence | Measured at |
 | --- | --- | --- | --- | --- |
-| badge | 6 variants; light, dark | 0 of 48 (48 errors: fonts do not load) | [`reference-v1.json`](../../../components/evidence/reference-v1.json) | `183f3d1b`, 10 November 2026 |
-| button | 6 variants, sizes xs, sm and lg, disabled; light, dark | 0 of 80 (80 errors: fonts do not load) | [`reference-v1.json`](../../../components/evidence/reference-v1.json) | `183f3d1b`, 10 November 2026 |
-| card | basic, with action; light, dark | 0 of 16 (16 errors: fonts do not load) | [`reference-v1.json`](../../../components/evidence/reference-v1.json) | `183f3d1b`, 10 November 2026 |
-| font | Geist, Geist Mono, Inter; light, dark | 0 of 24 (24 errors: fonts do not load) | [`reference-v1.json`](../../../components/evidence/reference-v1.json) | `183f3d1b`, 10 November 2026 (unchanged since `c98950ef`) |
-| label | basic; light, dark | 0 of 8 (8 errors: fonts do not load) | [`reference-v1.json`](../../../components/evidence/reference-v1.json) | `183f3d1b`, 10 November 2026 |
-| separator | horizontal, vertical; light, dark | 8 of 16 | [`reference-v1.json`](../../../components/evidence/reference-v1.json) | `183f3d1b`, 10 November 2026 (unchanged since `7fc2c227`) |
+| badge | 6 variants; light, dark | 0 of 48 | [`reference-v1.json`](../../../components/evidence/reference-v1.json) | `916d2735`, 11 November 2026 |
+| button | 6 variants, sizes xs, sm and lg, disabled; light, dark | 0 of 80 | [`reference-v1.json`](../../../components/evidence/reference-v1.json) | `916d2735`, 11 November 2026 |
+| card | basic, with action; light, dark | 0 of 16 | [`reference-v1.json`](../../../components/evidence/reference-v1.json) | `916d2735`, 11 November 2026 |
+| font | Geist, Geist Mono, Inter; light, dark | 0 of 24 | [`reference-v1.json`](../../../components/evidence/reference-v1.json) | `916d2735`, 11 November 2026 |
+| label | basic; light, dark | 0 of 8 | [`reference-v1.json`](../../../components/evidence/reference-v1.json) | `916d2735`, 11 November 2026 |
+| separator | horizontal, vertical; light, dark | 16 of 16 | [`reference-v1.json`](../../../components/evidence/reference-v1.json) | `916d2735`, 11 November 2026 |
 
 Each fixture is compared at the four census profiles (`legacy-800x600@1`,
 `mobile-375x667@2`, `desktop-1280x720@1.25`, `desktop-1920x1080@1.5`).
+
+## 11 November 2026: measured on main after A2 colors and WOFF2
+
+### Change
+
+No components code changed. Main gained the engine's `oklch()`,
+`oklab()` and `color-mix()` support, which also stopped clamping color
+channels when painting (#95), and WOFF and WOFF2 decoding before the font
+scaler (#97). The evidence was measured again at main `916d2735`.
+
+### Measurement
+
+The complete run in the census real-font environment is 16 of 192
+comparisons exact, 176 different and 0 errors
+([`reference-v1.json`](../../../components/evidence/reference-v1.json)):
+
+- **Every separator is exact (16 of 16).** The 8 dark separators differed
+  only where the painter clamped the slightly out-of-gamut white tokens;
+  the stand-in floats are now painted unclamped, as Chromium does.
+- **The fonts load.** The 176 errors (`MalformedFont`) are gone; every
+  fixture that draws text now renders and is compared.
+- Run with the system FreeType, as the 10 November preview at `183f3d1b`
+  was, no image has more differing pixels than in that preview. 37 have fewer: the 8 dark separators
+  and dark buttons, badges and cards. 152 are byte-identical, and 3 changed
+  bytes with the same count. The census FreeType and the system one give
+  the same image for 188 of 192 pages.
+
+### Remaining failures
+
+- **Text.** Every button, badge, card, font and label page still differs
+  inside the text (the C4 vertical placement finding). Owner: engine
+  track, A6 real-font text.
+- **Column flex and grid layout.** The card and font fixtures' layouts
+  differ (152 of 192 fixture layouts the same, as before): the column flex
+  min-content height, the grid `auto` column width and the grid
+  auto-placement cursor, recorded on 9 November. The engine track has
+  fixes for all three on its branches (`96a9fb47`, `00bfc5b8`, `9f8e5dba`);
+  a preview with them, outside the evidence, matched all 192 layouts.
+  Owner: engine track, layout.
+- **Edges at 800x600.** The dark outline button's translucent border is now
+  exact (228 differing edge pixels before, 0 now). The dark outline badge
+  went from 183 to 106 and still differs. Filled badge ends (15 to 78
+  pixels; the dark destructive badge went from 22 to 15) and the disabled
+  button's opacity corners (17 and 35) still differ. Owner: engine track, paint.
+
+### Verification
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Comparison | `reference_harness.py compare --renderer <release openui-components-reference> --repository-commit 916d2735… --evidence components/evidence/reference-v1.json` in WSL, under `census_lock.py run --wait`, renderer built with the CI `SKIA_GN_ARGS` | 16 of 192 exact, 176 different, 0 errors; complete |
+| Renderer reproduces | `cargo clean --release -p openui-components-reference -p openui-components`, rebuild at `916d2735`, `sha256sum` | `d8c31acc…`, the SHA-256 in the evidence |
+| Geometry (preview) | `reference_harness.py geometry --renderer <wrapper running the release renderer with the system FreeType>` in WSL | 152 of 192 fixture layouts the same; differences only in the card and font fixtures |
+| Edges (preview) | each button and badge diff at 800x600 split into pixels within 3px of the component's edge and inside it | as listed above |
 
 ## 9 November 2026: button, badge, card and label
 
@@ -263,8 +316,8 @@ These are API requests for the framework track, not blockers.
 
 ## Next
 
-1. Remeasure once engine A2 (colors) and the WOFF2 fix merge, and replace
-   the stand-ins with real `oklch()` and `color-mix()` values.
+1. Replace the sRGB stand-ins with real `oklch()` and `color-mix()`
+   values, now that Open UI parses them.
 2. Build the Radix-like primitives (C2) as proposed in
    [RFC 0003](../../alpha/rfcs/0003-component-primitives.md), once the
    framework and engine tracks have reviewed its requests, then tabs,
