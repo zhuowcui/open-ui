@@ -84,7 +84,9 @@ scenarios are release blockers.
 - Keep each change logically scoped and include tests for behavior changes.
 - Use one PR at a time per track, targeting `main`. Rebase it on the latest
   `main` and merge it on green CI before starting the track's next task; do
-  not create PR stacks. Record failing checks honestly, including
+  not create PR stacks. A PR may skip the rebase only when `main` gained
+  nothing but changes to paths it cannot interact with; see the exception in
+  [AGENTS.md](AGENTS.md). Record failing checks honestly, including
   any failures explicitly accepted for an experimental integration. Such an
   integration does not waive renderer or release qualification.
 - Update API, migration, and unsupported-feature documentation together.

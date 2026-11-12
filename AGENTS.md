@@ -11,6 +11,15 @@ merging, rebase the PR on the latest `main` and rerun its checks; merge it to
 `main`. Do not create PR stacks, merge another track's PR, force-push `main`
 or leave integration work for the user.
 
+Exception: if every commit `main` gained since the PR's last green run only
+touches paths the PR cannot interact with (`brand/`, `site/`, or Markdown
+documentation outside generated and checked files), the PR may merge on its
+existing green run without a rebase, provided GitHub reports no conflict.
+Rebase and rerun when `main` gained any change to Rust code, `Cargo.toml` or
+`Cargo.lock`, generators or generated files, tools, fixtures, or
+`.github/workflows`, and whenever in doubt. Never enable GitHub auto-merge:
+`main` has no required checks, so it merges before CI finishes.
+
 Keep temporary builds and comparison materializations under ignored `out/`
 paths, and give each worktree its own `CARGO_TARGET_DIR` there (for example
 `out\cargo-<track>`), because concurrent builds in one target directory block
