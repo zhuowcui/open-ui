@@ -69,14 +69,8 @@ pub fn Badge(variant: BadgeVariant, children: Vec<ViewNode>) -> ViewNode {
     badge
         .set_attribute("data-variant", variant.name())
         .expect("set data-variant");
-    let transparent = Color {
-        r: 0.0,
-        g: 0.0,
-        b: 0.0,
-        a: 0.0,
-    };
     set_border(&badge, "1");
-    set_border_color(&badge, transparent);
+    set_border_color(&badge, "transparent");
 
     match variant {
         BadgeVariant::Default => {
@@ -89,9 +83,9 @@ pub fn Badge(variant: BadgeVariant, children: Vec<ViewNode>) -> ViewNode {
         }
         BadgeVariant::Destructive => {
             let background = if theme.dark {
-                with_opacity(theme.destructive, 60.0)
+                with_opacity(theme.destructive, 60)
             } else {
-                theme.destructive
+                theme.destructive.css().to_owned()
             };
             set_color(&badge, "background-color", background);
             set(&badge, &[("color", "#fff")]);

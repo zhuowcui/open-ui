@@ -318,8 +318,8 @@ fn mount_fixture(
     // `body { @apply bg-background text-foreground }` from shadcn's base layer;
     // Tailwind's preflight removes the body margin.
     let body = app.document().body();
-    body.set_background_color(theme.background)?;
-    body.set_color(theme.foreground)?;
+    body.set_background_color(theme.background.color())?;
+    body.set_color(theme.foreground.color())?;
     let fixture_id = id.to_owned();
     // Preflight gives `html` the `--font-sans` family (Geist) and
     // `line-height: 1.5`; the page has no text outside `<main>`, so setting

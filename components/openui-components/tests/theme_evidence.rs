@@ -1,11 +1,11 @@
-//! Every stand-in theme color matches the recorded Chromium conversion.
+//! Every theme token is shadcn's value, and Open UI resolves it to the sRGB
+//! color Chromium computes for it.
 
-use openui::prelude::Color;
-use openui_components::Theme;
+use openui_components::{Theme, Token};
 
 const EVIDENCE: &str = include_str!("../../evidence/theme-tokens-v1.json");
 
-fn field(theme: &Theme, token: &str) -> Color {
+fn field(theme: &Theme, token: &str) -> Token {
     match token {
         "background" => theme.background,
         "foreground" => theme.foreground,
@@ -43,31 +43,35 @@ fn field(theme: &Theme, token: &str) -> Color {
 }
 
 #[test]
-fn stand_in_colors_match_the_chromium_evidence() {
+fn tokens_match_the_chromium_evidence() {
     let evidence: serde_json::Value = serde_json::from_str(EVIDENCE).unwrap();
     let tokens = evidence["tokens"].as_array().unwrap();
     assert_eq!(tokens.len(), 62);
     for token in tokens {
-        let theme = match token["theme"].as_str().unwrap() {
+        let theme_name = token["theme"].as_str().unwrap();
+        let theme = match theme_name {
             "light" => Theme::LIGHT,
             "dark" => Theme::DARK,
             other => panic!("unknown theme {other}"),
         };
         let name = token["token"].as_str().unwrap();
-        let rgba = token["stand_in_rgba"].as_array().unwrap();
-        let channel = |index: usize| rgba[index].as_f64().unwrap() as f32;
-        let expected = Color {
-            r: channel(0),
-            g: channel(1),
-            b: channel(2),
-            a: channel(3),
-        };
-        let theme_name = token["theme"].as_str().unwrap();
+        let value = field(&theme, name);
         assert_eq!(
-            field(&theme, name),
-            expected,
+            value.css(),
+            token["specified"].as_str().unwrap(),
             "--{name} in the {theme_name} theme"
         );
+        // Chromium serializes each channel to six significant digits.
+        let color = value.color();
+        let resolved = [color.r, color.g, color.b, color.a];
+        let rgba = token["stand_in_rgba"].as_array().unwrap();
+        for (channel, expected) in resolved.iter().zip(rgba) {
+            let expected = expected.as_f64().unwrap() as f32;
+            assert!(
+                (channel - expected).abs() <= 5e-6 * expected.abs().max(0.1),
+                "--{name} in the {theme_name} theme: {resolved:?}, Chromium {rgba:?}"
+            );
+        }
     }
 }
 

@@ -53,13 +53,10 @@ pub(crate) fn set(element: &Element, declarations: &[(&str, &str)]) {
     }
 }
 
-/// Set a color property from a theme color.
-pub(crate) fn set_color(element: &Element, name: &str, color: Color) {
-    let property = StyleProperty::from_css_name(name)
-        .unwrap_or_else(|| panic!("Open UI has no CSS property `{name}`"));
-    element
-        .set_property(property, StyleValue::from(color))
-        .unwrap_or_else(|error| panic!("`{name}`: {error}"));
+/// Set a color property from a CSS color: a theme [`Token`](crate::Token)
+/// or a value built from one ([`with_opacity`]).
+pub(crate) fn set_color(element: &Element, name: &str, color: impl AsRef<str>) {
+    set(element, &[(name, color.as_ref())]);
 }
 
 /// Set a solid border of `width` on all four sides, as Tailwind's `border`
@@ -82,21 +79,19 @@ pub(crate) fn set_border(element: &Element, width: &str) {
 
 /// Set all four border colors (`border-color`, which Open UI has only as
 /// longhands).
-pub(crate) fn set_border_color(element: &Element, color: Color) {
+pub(crate) fn set_border_color(element: &Element, color: impl AsRef<str>) {
     for side in ["top", "right", "bottom", "left"] {
-        set_color(element, &format!("border-{side}-color"), color);
+        set_color(element, &format!("border-{side}-color"), color.as_ref());
     }
 }
 
-/// STAND-IN for `color-mix(in oklab, <color> <percent>%, transparent)`,
-/// Tailwind's opacity modifier (`bg-input/30`). Mixing with `transparent`
-/// in a premultiplied space keeps the color and scales its alpha. Replace
-/// with the real `color-mix()` once Open UI parses it (engine A2).
-pub(crate) fn with_opacity(color: Color, percent: f32) -> Color {
-    Color {
-        a: color.a * percent / 100.0,
-        ..color
-    }
+/// Tailwind's opacity modifier (`bg-input/30`):
+/// `color-mix(in oklab, <color> <percent>%, transparent)`.
+pub(crate) fn with_opacity(color: impl AsRef<str>, percent: u8) -> String {
+    format!(
+        "color-mix(in oklab, {} {percent}%, transparent)",
+        color.as_ref()
+    )
 }
 
 /// One `box-shadow` layer: `<x> <y> <blur> <spread> rgb(0 0 0 / <alpha>)`.

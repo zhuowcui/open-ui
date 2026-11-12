@@ -126,9 +126,9 @@ pub fn Button(
         }
         ButtonVariant::Destructive => {
             let background = if theme.dark {
-                with_opacity(theme.destructive, 60.0)
+                with_opacity(theme.destructive, 60)
             } else {
-                theme.destructive
+                theme.destructive.css().to_owned()
             };
             set_color(&button, "background-color", background);
             // `text-white`: Tailwind's `--color-white`, #fff.
@@ -140,7 +140,7 @@ pub fn Button(
             set_box_shadow(&button, vec![black_shadow(0.0, 1.0, 2.0, 0.0, 0.05)]);
             if theme.dark {
                 set_border_color(&button, theme.input);
-                set_color(&button, "background-color", with_opacity(theme.input, 30.0));
+                set_color(&button, "background-color", with_opacity(theme.input, 30));
             } else {
                 // Every element's border is `--border` (shadcn's base layer).
                 set_border_color(&button, theme.border);

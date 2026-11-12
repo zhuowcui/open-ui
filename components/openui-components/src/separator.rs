@@ -26,7 +26,7 @@ pub enum Orientation {
 #[allow(non_snake_case)]
 #[component]
 pub fn Separator(orientation: Orientation) -> ViewNode {
-    let border = current_theme().border;
+    let border = current_theme().border.color();
     match orientation {
         Orientation::Horizontal => view! {
             <div

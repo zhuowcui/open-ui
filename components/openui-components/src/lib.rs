@@ -25,7 +25,7 @@ pub use card::{
 pub use fonts::register_fonts;
 pub use label::{Label, LabelProps};
 pub use separator::{Orientation, Separator, SeparatorProps};
-pub use theme::Theme;
+pub use theme::{Theme, Token};
 
 use std::cell::Cell;
 
