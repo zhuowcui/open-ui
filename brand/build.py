@@ -47,6 +47,9 @@ ACCENT = "#266EFB"  # Div blue, oklch(0.58 0.223 262)
 BLACK = "#000000"
 WHITE = "#FFFFFF"
 
+# The site's tagline, set under the wordmark on the social card.
+TAGLINE = "Everything you love about web UI, none of the weight."
+
 # Wordmark spacing, in font units (1000 per em), added after each letter.
 TRACK = {"d": -40, "i": -26}
 # Slash: horizontal run as a share of the stem, and its horizontal gap from
@@ -597,16 +600,19 @@ def og_image() -> str:
     f = lambda p: (p[0] * k + wx, p[1] * k + wy)  # noqa: E731
     body.append(path(letters.map(f).svg(2), PAPER) + path(sl.map(f).svg(2), ACCENT))
 
-    # Headline (the site's) and address, as outlines.
+    # Tagline and address, as outlines.
     regular = Font.load(GEIST, 400)
-    line, lw = regular.shape("Native desktop apps in Rust, styled like the web.", 34)
+    line, lw = regular.shape(TAGLINE, 34)
+    # Keep the line inside the card's 120 px side margins (and narrower than
+    # the 1.91:1 crop some feeds show).
+    assert lw <= W - 2 * 120, f"tagline is {lw:.0f} px wide; shorten it or reduce its size"
     line = line.map(lambda p: (p[0] + (W - lw) / 2, 452 - p[1]))
     body.append(path(line.svg(2), "#A1A1AA"))
     mono = Font.load(GEIST_MONO, 450)
     url, uw = mono.shape("div.build", 22)
     url = url.map(lambda p: (p[0] + (W - uw) / 2, 560 - p[1]))
     body.append(path(url.svg(2), "#71717A"))
-    return svg_doc(W, H, "".join(body), label="Div: native desktop apps in Rust, styled like the web")
+    return svg_doc(W, H, "".join(body), label=f"Div: {TAGLINE}")
 
 
 # --------------------------------------------------------------------------
