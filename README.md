@@ -1,5 +1,12 @@
 # Open UI
 
+> **This repository has moved.** Open UI is now **Div**, developed at
+> [build-with-div/div](https://github.com/build-with-div/div) (site:
+> [div.build](https://div.build)). Fidelity evidence lives in
+> [build-with-div/div-fidelity-data](https://github.com/build-with-div/div-fidelity-data).
+> This repository is archived and read-only; its history and branches stay
+> here for reference. Open pull requests were moved to Div.
+
 Open UI is a typed, reactive desktop and headless UI framework built around one
 shared Rust engine and Skia renderer. Version 0.2 targets Linux on x86-64 and AArch64, with X11,
 Wayland, OpenGL presentation, automatic software fallback, and a co-equal C ABI.
