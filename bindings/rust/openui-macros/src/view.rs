@@ -23,7 +23,7 @@ pub(crate) fn typed_value_tokens(value: &openui_style::StyleValue) -> Result<Tok
         .map_err(|error| error.to_string())
 }
 
-fn property_tokens(value: openui_style::StyleProperty) -> TokenStream {
+pub(crate) fn property_tokens(value: openui_style::StyleProperty) -> TokenStream {
     let variant = format_ident!("{}", format!("{value:?}"));
     quote! { ::openui::typed_style::StyleProperty::#variant }
 }
